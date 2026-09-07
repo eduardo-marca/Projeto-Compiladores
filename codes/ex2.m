@@ -1,10 +1,12 @@
 fn sum(values: Int[]) -> Int {
     var total = 0;
 
+    // sum each number in array
     for x in values {
         total += x;
     }
 
+    // return sum total
     return total;
 }
 

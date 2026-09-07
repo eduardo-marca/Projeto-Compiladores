@@ -74,18 +74,22 @@ void DFA::buildLexerDFA()
     addTransition(11, CharClass::Letter, 12);
     addTransition(12, CharClass::Digit, 12);
     addTransition(12, CharClass::Letter, 12);
+    addTransition(12, CharClass::Space, 12);
+    addTransition(12, CharClass::Tab, 12);
     addTransition(12, CharClass::Quote, 13);
     setFinal(13, TokenType::StringLiteral);
 
     // Division and comment
     addTransition(0, CharClass::Slash, 15);
-    setFinal(14, TokenType::Slash);
+    setFinal(15, TokenType::Slash);
     addTransition(15, CharClass::Equal, 14);
     setFinal(14, TokenType::SlashAssign);
     addTransition(15, CharClass::Slash, 16);
     addTransition(16, CharClass::Digit, 16);
     addTransition(16, CharClass::Letter, 16);
-    setFinal(14, TokenType::Comment);
+    addTransition(16, CharClass::Space, 16);
+    addTransition(16, CharClass::Tab, 16);
+    setFinal(16, TokenType::Comment);
 
     // Plus
     addTransition(0, CharClass::Plus, 17);
@@ -96,17 +100,26 @@ void DFA::buildLexerDFA()
     setFinal(20, TokenType::PlusAssign);
 
     // Unique
-    addTransition(0, CharClass::Semicolon, 19);
     addTransition(0, CharClass::LParen, 19);
-    addTransition(0, CharClass::RParen, 19);
-    addTransition(0, CharClass::LBracket, 19);
-    addTransition(0, CharClass::RBracket, 19);
-    addTransition(0, CharClass::LCurly, 19);
-    addTransition(0, CharClass::RCurly, 19);
-    addTransition(0, CharClass::Comma, 19);
-    addTransition(0, CharClass::Colon, 19);
-    addTransition(0, CharClass::Question, 19);
-    setFinal(19, TokenType::UniqueToken);
+    setFinal(19, TokenType::LParen);
+    addTransition(0, CharClass::RParen, 38);
+    setFinal(38, TokenType::RParen);
+    addTransition(0, CharClass::LBracket, 39);
+    setFinal(39, TokenType::LBracket);
+    addTransition(0, CharClass::RBracket, 40);
+    setFinal(40, TokenType::RBracket);
+    addTransition(0, CharClass::LCurly, 41);
+    setFinal(41, TokenType::LCurly);
+    addTransition(0, CharClass::RCurly, 42);
+    setFinal(42, TokenType::RCurly);
+    addTransition(0, CharClass::Semicolon, 43);
+    setFinal(43, TokenType::Semicolon);
+    addTransition(0, CharClass::Comma, 44);
+    setFinal(44, TokenType::Comma);
+    addTransition(0, CharClass::Colon, 45);
+    setFinal(45, TokenType::Colon);
+    addTransition(0, CharClass::Question, 46);
+    setFinal(46, TokenType::Question);
 
     // Relational
     // <=

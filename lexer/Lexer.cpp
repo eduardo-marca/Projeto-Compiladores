@@ -5,6 +5,28 @@
 Lexer::Lexer(const std::string& source) : source(source), dfa(0)
 {
     dfa.buildLexerDFA();
+
+    reserved_words["if"] = TokenType::If;
+    reserved_words["else"] = TokenType::Else;
+    reserved_words["while"] = TokenType::While;
+    reserved_words["for"] = TokenType::For;
+    reserved_words["fn"] = TokenType::Fn;
+    reserved_words["return"] = TokenType::Return;
+    reserved_words["as"] = TokenType::As;
+    reserved_words["var"] = TokenType::Var;
+    reserved_words["let"] = TokenType::Let;
+    reserved_words["in"] = TokenType::In;
+    reserved_words["not"] = TokenType::Not;
+    reserved_words["or"] = TokenType::Or;
+    reserved_words["and"] = TokenType::And;
+    reserved_words["xor"] = TokenType::Xor;
+    reserved_words["Int"] = TokenType::IntType;
+    reserved_words["Float"] = TokenType::FloatType;
+    reserved_words["Bool"] = TokenType::BoolType;
+    reserved_words["Char"] = TokenType::CharType;
+    reserved_words["String"] = TokenType::StringType;
+    reserved_words["true"] = TokenType::TrueLiteral;
+    reserved_words["false"] = TokenType::FalseLiteral;
 }
 
 Token Lexer::nextToken()
@@ -49,38 +71,8 @@ Token Lexer::nextToken()
 
     Token token = Token(*lastToken, lexeme);
 
-    if(token.type == TokenType::UniqueToken) {
-        if(token.lexeme == ";") token.type = TokenType::Semicolon;
-        else if(token.lexeme == "(") token.type = TokenType::LParen;
-        else if(token.lexeme == ")") token.type = TokenType::RParen;
-        else if(token.lexeme == "[") token.type = TokenType::LBracket;
-        else if(token.lexeme == "]") token.type = TokenType::RBracket;
-        else if(token.lexeme == "{") token.type = TokenType::LCurly;
-        else if(token.lexeme == "}") token.type = TokenType::RCurly;
-        else if(token.lexeme == ",") token.type = TokenType::Comma;
-        else if(token.lexeme == ":") token.type = TokenType::Colon;
-        else if(token.lexeme == "?") token.type = TokenType::Question;
-        else token.type = TokenType::Unknown;
-    }
-    else if(token.type == TokenType::Identifier) {
-        if(token.lexeme == "if") token.type = TokenType::If;
-        else if(token.lexeme == "else") token.type = TokenType::Else;
-        else if(token.lexeme == "while") token.type = TokenType::While;
-        else if(token.lexeme == "for") token.type = TokenType::For;
-        else if(token.lexeme == "fn") token.type = TokenType::Fn;
-        else if(token.lexeme == "return") token.type = TokenType::Return;
-        else if(token.lexeme == "var") token.type = TokenType::Var;
-        else if(token.lexeme == "let") token.type = TokenType::Let;
-        else if(token.lexeme == "in") token.type = TokenType::In;
-        else if(token.lexeme == "not") token.type = TokenType::Not;
-        else if(token.lexeme == "or") token.type = TokenType::Or;
-        else if(token.lexeme == "and") token.type = TokenType::And;
-        else if(token.lexeme == "xor") token.type = TokenType::Xor;
-        else if(token.lexeme == "Int") token.type = TokenType::IntType;
-        else if(token.lexeme == "Float") token.type = TokenType::FloatType;
-        else if(token.lexeme == "Bool") token.type = TokenType::BoolType;
-        else if(token.lexeme == "Char") token.type = TokenType::CharType;
-        else if(token.lexeme == "String") token.type = TokenType::StringType;
+    if(token.type == TokenType::Identifier) {
+        if(reserved_words.count(token.lexeme)) token.type = reserved_words[lexeme];
     }
 
     return token;

@@ -6,7 +6,7 @@
 #include "Lexer.hpp"
 
 int main() {
-    std::ifstream file("codes/ex3.m");
+    std::ifstream file("codes/ex2.m");
 
     if(!file.is_open()) {
         std::cerr << "Failed to open the file." << std::endl;

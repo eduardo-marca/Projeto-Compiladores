@@ -6,7 +6,9 @@ enum class CharClass {
     Letter,
     Digit,
     Underscore,
-    Whitespace,
+    Space,
+    Tab,
+    EndOfLine,
 
     Plus,
     Minus,
@@ -46,11 +48,11 @@ inline CharClass classify(char c) {
 
     if (std::isdigit(value))
         return CharClass::Digit;
-
-    if (std::isspace(value))
-        return CharClass::Whitespace;
-
+        
     switch (c) {
+        case ' ': return CharClass::Space;
+        case '\t': return CharClass::Tab;
+        case '\n': return CharClass::EndOfLine;
         case '+': return CharClass::Plus;
         case '-': return CharClass::Minus;
         case '*': return CharClass::Star;

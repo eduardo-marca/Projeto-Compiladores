@@ -1,0 +1,47 @@
+program: stmt_list
+
+stmt_list: empty | stmt_list stmt
+
+stmt:
+    expr ';'
+    | block
+    | IF expr stmt
+    | IF expr stmt ELSE stmt
+    | WHILE expr stmt
+    | FOR
+
+block:
+    '{' stmt_list '}'
+
+expr:
+    IDENTIFIER '=' expr
+    | term
+    | term '+' expr
+    | term '-' expr
+
+term:
+    fact
+    | term '*' fact
+    | term '/' fact
+    | term '%' fact
+
+fact:
+    unit
+    | fact '^' unit
+
+unit:
+    primary
+    | ( expr )
+
+primary:
+    IDENTIFIER
+    | number
+    | boolean
+
+number:
+    INT_LITERAL
+    | FLOAT_LITERAL
+
+boolean:
+    TRUE_LITERAL
+    | FALSE_LITERAL

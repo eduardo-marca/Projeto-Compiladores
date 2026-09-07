@@ -18,6 +18,7 @@ enum class TokenType {
     Or,
     And,
     Xor,
+    As,
     Comment,
 
     // Literals
