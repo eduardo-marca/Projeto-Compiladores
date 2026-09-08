@@ -20,7 +20,7 @@ int main() {
     Lexer lexer(file_contents);
 
     Token token = lexer.nextToken();
-    while(token.type != TokenType::EndOfFile) {
+    while(token.type != TokenType::END_OF_FILE) {
         std::cout << token.ToString() << std::endl;
         token = lexer.nextToken();
     }

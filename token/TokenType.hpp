@@ -3,158 +3,173 @@
 #include <string>
 
 enum class TokenType {
-    // Id and instructions
-    Identifier,
-    If,
-    Else,
-    While,
-    For,
-    Fn,
-    Return,
-    Var,
-    Let,
-    In,
-    Not,
-    Or,
-    And,
-    Xor,
-    As,
-    Comment,
+    // Id and keywords
+    IDENTIFIER,
+    IF,
+    ELSE,
+    WHILE,
+    FOR,
+    FN,
+    RETURN,
+    VAR,
+    LET,
+    AS,
+    IN,
+    NOT,
+    OR,
+    AND,
+    XOR,
+
+    // Comment
+    COMMENT,
 
     // Literals
-    IntLiteral,
-    FloatLiteral,
-    TrueLiteral, // true
-    FalseLiteral, // false
-    CharLiteral,
-    StringLiteral,
+    INT_LITERAL,
+    FLOAT_LITERAL,
+    TRUE_LITERAL, // true
+    FALSE_LITERAL, // false
+    CHAR_LITERAL,
+    STRING_LITERAL,
 
     // Types
-    IntType, // Int
-    FloatType, // Float
-    BoolType, // Bool
-    CharType, // Char
-    StringType, // String
-    VoidType, // Void
+    INT_TYPE, // Int
+    FLOAT_TYPE, // Float
+    BOOL_TYPE, // Bool
+    CHAR_TYPE, // Char
+    STRING_TYPE, // String
+    VOID_TYPE, // Void
 
     // Arithmetic operators
-    Plus, // +
-    Minus, // - 
-    Star, // *
-    Slash, // /
-    Caret, // ^
-    Modulo, // %
-    PlusAssign, // +=
-    MinusAssign, // - =
-    StarAssign, // *=
-    SlashAssign, // /=
-    CaretAssign, // ^=
-    PercentAssign, // %=
-    Increment, // ++
-    Decrement, // --
+    PLUS, // +
+    MINUS, // - 
+    STAR, // *
+    SLASH, // /
+    CARET, // ^
+    PERCENT, // %
+    PLUS_EQUAL, // +=
+    MINUS_EQUAL, // - =
+    STAR_EQUAL, // *=
+    SLASH_EQUAL, // /=
+    CARET_EQUAL, // ^=
+    PERCENT_EQUAL, // %=
+    INCREMENT, // ++
+    DECREMENT, // --
 
     // Relational operators
-    Equal, // ==
-    Less, // <
-    Greater, // >
-    LessEqual, // <=
-    GreaterEqual, // >=
-    NotEqual, // !=
+    EQUAL, // ==
+    LEFT_ANGLE, // <
+    RIGHT_ANGLE, // >
+    LEFT_ANGLE_EQUAL, // <=
+    RIGHT_ANGLE_EQUAL, // >=
+    EXCLAMATION_EQUAL, // !=
     
     // Unique tokens
-    UniqueToken,
-    Assign, // =
-    Quote, // "
-    Comma, // ,
-    Point, // .
-    Range, // ..
-    Semicolon, // ;
-    Colon, // :
-    Question, // ?
-    Apostrophe, // '
-    Arrow, // ->
+    UNDERSCORE, // _
+    ASSIGN, // =
+    QUOTE, // "
+    COMMA, // ,
+    POINT, // .
+    RANGE, // ..
+    SEMICOLON, // ;
+    COLON, // :
+    QUESTION, // ?
+    APOSTROPHE, // '
+    AND_SIGN, // &
+    ARROW, // ->
+    AT, // @
+    HASH, // #
+    BAR, // |
+    TILDE, // ~
+    DOLLAR, // $
+    BACKSLASH,
 
-    LParen,
-    RParen,
-    LBracket,
-    RBracket,
-    LCurly,
-    RCurly,
+    LEFT_PAREN, // (
+    RIGHT_PAREN, // )
+    LEFT_BRACKET, // [
+    RIGHT_BRACKET, // ]
+    LEFT_BRACE, // {
+    RIGHT_BRACE, // }
 
-    EndOfFile,
+    END_OF_FILE,
 
     Unknown
 };
 
 inline std::string to_string(TokenType tokenType) {
     switch (tokenType) {
-        case TokenType::Identifier: return "Identifier";
-        case TokenType::If: return "If";
-        case TokenType::Else: return "Else";
-        case TokenType::While: return "While";
-        case TokenType::For: return "For";
-        case TokenType::Fn: return "Fn";
-        case TokenType::Return: return "Return";
-        case TokenType::Var: return "Var";
-        case TokenType::Let: return "Let";
-        case TokenType::In: return "In";
-        case TokenType::Not: return "Not";
-        case TokenType::Or: return "Or";
-        case TokenType::And: return "And";
-        case TokenType::Xor: return "Xor";
-        case TokenType::As: return "As";
-        case TokenType::Comment: return "Comment";
-        case TokenType::IntLiteral: return "IntLiteral";
-        case TokenType::FloatLiteral: return "FloatLiteral";
-        case TokenType::TrueLiteral: return "TrueLiteral";
-        case TokenType::FalseLiteral: return "FalseLiteral";
-        case TokenType::CharLiteral: return "CharLiteral";
-        case TokenType::StringLiteral: return "StringLiteral";
-        case TokenType::IntType: return "IntType";
-        case TokenType::FloatType: return "FloatType";
-        case TokenType::BoolType: return "BoolType";
-        case TokenType::CharType: return "CharType";
-        case TokenType::StringType: return "StringType";
-        case TokenType::VoidType: return "VoidType";
-        case TokenType::Plus: return "Plus";
-        case TokenType::Minus: return "Minus";
-        case TokenType::Star: return "Star";
-        case TokenType::Slash: return "Slash";
-        case TokenType::Caret: return "Caret";
-        case TokenType::Modulo: return "Modulo";
-        case TokenType::PlusAssign: return "PlusAssign";
-        case TokenType::MinusAssign: return "MinusAssign";
-        case TokenType::StarAssign: return "StarAssign";
-        case TokenType::SlashAssign: return "SlashAssign";
-        case TokenType::CaretAssign: return "CaretAssign";
-        case TokenType::PercentAssign: return "PercentAssign";
-        case TokenType::Increment: return "Increment";
-        case TokenType::Decrement: return "Decrement";
-        case TokenType::Equal: return "Equal";
-        case TokenType::Less: return "Less";
-        case TokenType::Greater: return "Greater";
-        case TokenType::LessEqual: return "LessEqual";
-        case TokenType::GreaterEqual: return "GreaterEqual";
-        case TokenType::NotEqual: return "NotEqual";
-        case TokenType::UniqueToken: return "UniqueToken";
-        case TokenType::Assign: return "Assign";
-        case TokenType::Quote: return "Quote";
-        case TokenType::Comma: return "Comma";
-        case TokenType::Point: return "Point";
-        case TokenType::Range: return "Range";
-        case TokenType::Semicolon: return "Semicolon";
-        case TokenType::Colon: return "Colon";
-        case TokenType::Question: return "Question";
-        case TokenType::Apostrophe: return "Apostrophe";
-        case TokenType::Arrow: return "Arrow";
-        case TokenType::LParen: return "LParen";
-        case TokenType::RParen: return "RParen";
-        case TokenType::LBracket: return "LBracket";
-        case TokenType::RBracket: return "RBracket";
-        case TokenType::LCurly: return "LCurly";
-        case TokenType::RCurly: return "RCurly";
-        case TokenType::Unknown: return "Unknown";
-        case TokenType::EndOfFile: return "EndOfFile";
+        case TokenType::IDENTIFIER: return "IDENTIFIER";
+        case TokenType::IF: return "IF";
+        case TokenType::ELSE: return "ELSE";
+        case TokenType::WHILE: return "WHILE";
+        case TokenType::FOR: return "FOR";
+        case TokenType::FN: return "FN";
+        case TokenType::RETURN: return "RETURN";
+        case TokenType::VAR: return "VAR";
+        case TokenType::LET: return "LET";
+        case TokenType::AS: return "AS";
+        case TokenType::IN: return "IN";
+        case TokenType::NOT: return "NOT";
+        case TokenType::OR: return "OR";
+        case TokenType::AND: return "AND";
+        case TokenType::XOR: return "XOR";
+        case TokenType::COMMENT: return "COMMENT";
+        case TokenType::INT_LITERAL: return "INT_LITERAL";
+        case TokenType::FLOAT_LITERAL: return "FLOAT_LITERAL";
+        case TokenType::TRUE_LITERAL: return "TRUE_LITERAL";
+        case TokenType::FALSE_LITERAL: return "FALSE_LITERAL";
+        case TokenType::CHAR_LITERAL: return "CHAR_LITERAL";
+        case TokenType::STRING_LITERAL: return "STRING_LITERAL";
+        case TokenType::INT_TYPE: return "INT_TYPE";
+        case TokenType::FLOAT_TYPE: return "FLOAT_TYPE";
+        case TokenType::BOOL_TYPE: return "BOOL_TYPE";
+        case TokenType::CHAR_TYPE: return "CHAR_TYPE";
+        case TokenType::STRING_TYPE: return "STRING_TYPE";
+        case TokenType::VOID_TYPE: return "VOID_TYPE";
+        case TokenType::PLUS: return "PLUS";
+        case TokenType::MINUS: return "MINUS";
+        case TokenType::STAR: return "STAR";
+        case TokenType::SLASH: return "SLASH";
+        case TokenType::CARET: return "CARET";
+        case TokenType::PERCENT: return "PERCENT";
+        case TokenType::PLUS_EQUAL: return "PLUS_EQUAL";
+        case TokenType::MINUS_EQUAL: return "MINUS_EQUAL";
+        case TokenType::STAR_EQUAL: return "STAR_EQUAL";
+        case TokenType::SLASH_EQUAL: return "SLASH_EQUAL";
+        case TokenType::CARET_EQUAL: return "CARET_EQUAL";
+        case TokenType::PERCENT_EQUAL: return "PERCENT_EQUAL";
+        case TokenType::INCREMENT: return "INCREMENT";
+        case TokenType::DECREMENT: return "DECREMENT";
+        case TokenType::EQUAL: return "EQUAL";
+        case TokenType::LEFT_ANGLE: return "LEFT_ANGLE";
+        case TokenType::RIGHT_ANGLE: return "RIGHT_ANGLE";
+        case TokenType::LEFT_ANGLE_EQUAL: return "LEFT_ANGLE_EQUAL";
+        case TokenType::RIGHT_ANGLE_EQUAL: return "RIGHT_ANGLE_EQUAL";
+        case TokenType::EXCLAMATION_EQUAL: return "EXCLAMATION_EQUAL";
+        case TokenType::UNDERSCORE: return "UNDERSCORE";
+        case TokenType::ASSIGN: return "ASSIGN";
+        case TokenType::QUOTE: return "QUOTE";
+        case TokenType::COMMA: return "COMMA";
+        case TokenType::POINT: return "POINT";
+        case TokenType::RANGE: return "RANGE";
+        case TokenType::SEMICOLON: return "SEMICOLON";
+        case TokenType::COLON: return "COLON";
+        case TokenType::QUESTION: return "QUESTION";
+        case TokenType::APOSTROPHE: return "APOSTROPHE";
+        case TokenType::AND_SIGN: return "AND_SIGN";
+        case TokenType::ARROW: return "ARROW";
+        case TokenType::AT: return "AT";
+        case TokenType::HASH: return "HASH";
+        case TokenType::BAR: return "BAR";
+        case TokenType::TILDE: return "TILDE";
+        case TokenType::DOLLAR: return "DOLLAR";
+        case TokenType::BACKSLASH: return "BACKSLASH";
+        case TokenType::LEFT_PAREN: return "LEFT_PAREN";
+        case TokenType::RIGHT_PAREN: return "RIGHT_PAREN";
+        case TokenType::LEFT_BRACKET: return "LEFT_BRACKET";
+        case TokenType::RIGHT_BRACKET: return "RIGHT_BRACKET";
+        case TokenType::LEFT_BRACE: return "LEFT_BRACE";
+        case TokenType::RIGHT_BRACE: return "RIGHT_BRACE";
+        case TokenType::END_OF_FILE: return "END_OF_FILE";
         default: return "Unknown";
     }
 }

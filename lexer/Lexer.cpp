@@ -6,28 +6,28 @@ Lexer::Lexer(const std::string& source) : source(source), dfa(0)
 {
     dfa.buildLexerDFA();
 
-    reserved_words["if"] = TokenType::If;
-    reserved_words["else"] = TokenType::Else;
-    reserved_words["while"] = TokenType::While;
-    reserved_words["for"] = TokenType::For;
-    reserved_words["fn"] = TokenType::Fn;
-    reserved_words["return"] = TokenType::Return;
-    reserved_words["as"] = TokenType::As;
-    reserved_words["var"] = TokenType::Var;
-    reserved_words["let"] = TokenType::Let;
-    reserved_words["in"] = TokenType::In;
-    reserved_words["not"] = TokenType::Not;
-    reserved_words["or"] = TokenType::Or;
-    reserved_words["and"] = TokenType::And;
-    reserved_words["xor"] = TokenType::Xor;
-    reserved_words["Int"] = TokenType::IntType;
-    reserved_words["Float"] = TokenType::FloatType;
-    reserved_words["Bool"] = TokenType::BoolType;
-    reserved_words["Char"] = TokenType::CharType;
-    reserved_words["String"] = TokenType::StringType;
-    reserved_words["Void"] = TokenType::VoidType;
-    reserved_words["true"] = TokenType::TrueLiteral;
-    reserved_words["false"] = TokenType::FalseLiteral;
+    reserved_words["if"] = TokenType::IF;
+    reserved_words["else"] = TokenType::ELSE;
+    reserved_words["while"] = TokenType::WHILE;
+    reserved_words["for"] = TokenType::FOR;
+    reserved_words["fn"] = TokenType::FN;
+    reserved_words["return"] = TokenType::RETURN;
+    reserved_words["as"] = TokenType::AS;
+    reserved_words["var"] = TokenType::VAR;
+    reserved_words["let"] = TokenType::LET;
+    reserved_words["in"] = TokenType::IN;
+    reserved_words["not"] = TokenType::NOT;
+    reserved_words["or"] = TokenType::OR;
+    reserved_words["and"] = TokenType::AND;
+    reserved_words["xor"] = TokenType::XOR;
+    reserved_words["Int"] = TokenType::INT_TYPE;
+    reserved_words["Float"] = TokenType::FLOAT_TYPE;
+    reserved_words["Bool"] = TokenType::BOOL_TYPE;
+    reserved_words["Char"] = TokenType::CHAR_TYPE;
+    reserved_words["String"] = TokenType::STRING_TYPE;
+    reserved_words["Void"] = TokenType::VOID_TYPE;
+    reserved_words["true"] = TokenType::TRUE_LITERAL;
+    reserved_words["false"] = TokenType::FALSE_LITERAL;
 }
 
 Token Lexer::nextToken()
@@ -36,7 +36,7 @@ Token Lexer::nextToken()
         position++;
     }
 
-    if(position == source.size()) return Token(TokenType::EndOfFile, "");
+    if(position == source.size()) return Token(TokenType::END_OF_FILE, "");
 
     std::size_t start = position;
 
@@ -74,7 +74,7 @@ Token Lexer::nextToken()
 
     Token token = Token(*lastToken, lexeme);
 
-    if(token.type == TokenType::Identifier) {
+    if(token.type == TokenType::IDENTIFIER) {
         if(reserved_words.count(token.lexeme)) token.type = reserved_words[lexeme];
     }
 

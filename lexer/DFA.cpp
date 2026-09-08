@@ -43,30 +43,30 @@ void DFA::buildLexerDFA()
 {
     // Minus, Arrow
     addTransition(0, CharClass::Minus, 3);
-    setFinal(3, TokenType::Minus);
+    setFinal(3, TokenType::MINUS);
     addTransition(3, CharClass::Greater, 1);
-    setFinal(1, TokenType::Arrow);
+    setFinal(1, TokenType::ARROW);
     addTransition(3, CharClass::Equal, 2);
-    setFinal(2, TokenType::MinusAssign);
+    setFinal(2, TokenType::MINUS_EQUAL);
     addTransition(3, CharClass::Minus, 4);
-    setFinal(4, TokenType::Decrement);
+    setFinal(4, TokenType::DECREMENT);
     addTransition(3, CharClass::Digit, 5);
     
     // Numbers
     addTransition(0, CharClass::Digit, 5);
     addTransition(5, CharClass::Digit, 5);
-    setFinal(5, TokenType::IntLiteral);
+    setFinal(5, TokenType::INT_LITERAL);
     addTransition(5, CharClass::Point, 6);
     addTransition(6, CharClass::Digit, 7);
     addTransition(7, CharClass::Digit, 7);
-    setFinal(7, TokenType::FloatLiteral);
+    setFinal(7, TokenType::FLOAT_LITERAL);
 
     // Char literal
     addTransition(0, CharClass::Apostrophe, 8);
     addTransition(8, CharClass::Digit, 9);
     addTransition(8, CharClass::Letter, 9);
     addTransition(9, CharClass::Apostrophe, 10);
-    setFinal(10, TokenType::CharLiteral);
+    setFinal(10, TokenType::CHAR_LITERAL);
 
     // String literal
     addTransition(0, CharClass::Quote, 11);
@@ -78,13 +78,13 @@ void DFA::buildLexerDFA()
     addTransition(12, CharClass::Tab, 12);
     addTransition(12, CharClass::Colon, 12);
     addTransition(12, CharClass::Quote, 13);
-    setFinal(13, TokenType::StringLiteral);
+    setFinal(13, TokenType::STRING_LITERAL);
 
     // Division and comment
     addTransition(0, CharClass::Slash, 15);
-    setFinal(15, TokenType::Slash);
+    setFinal(15, TokenType::SLASH);
     addTransition(15, CharClass::Equal, 14);
-    setFinal(14, TokenType::SlashAssign);
+    setFinal(14, TokenType::SLASH_EQUAL);
     addTransition(15, CharClass::Slash, 16);
     addTransition(16, CharClass::Digit, 16);
     addTransition(16, CharClass::Letter, 16);
@@ -93,7 +93,7 @@ void DFA::buildLexerDFA()
     addTransition(16, CharClass::LParen, 16);
     addTransition(16, CharClass::RParen, 16);
     addTransition(16, CharClass::Colon, 16);
-    setFinal(16, TokenType::Comment);
+    setFinal(16, TokenType::COMMENT);
     addTransition(15, CharClass::Star, 47);
     addTransition(47, CharClass::Letter, 47);
     addTransition(47, CharClass::Digit, 47);
@@ -105,62 +105,62 @@ void DFA::buildLexerDFA()
     addTransition(47, CharClass::Colon, 47);
     addTransition(47, CharClass::Star, 48);
     addTransition(48, CharClass::Slash, 49);
-    setFinal(49, TokenType::Comment);
+    setFinal(49, TokenType::COMMENT);
 
     // Plus
     addTransition(0, CharClass::Plus, 17);
-    setFinal(17, TokenType::Plus);
+    setFinal(17, TokenType::PLUS);
     addTransition(17, CharClass::Plus, 18);
-    setFinal(18, TokenType::Increment);
+    setFinal(18, TokenType::INCREMENT);
     addTransition(17, CharClass::Equal, 20);
-    setFinal(20, TokenType::PlusAssign);
+    setFinal(20, TokenType::PLUS_EQUAL);
 
     // Unique
     addTransition(0, CharClass::LParen, 19);
-    setFinal(19, TokenType::LParen);
+    setFinal(19, TokenType::LEFT_PAREN);
     addTransition(0, CharClass::RParen, 38);
-    setFinal(38, TokenType::RParen);
+    setFinal(38, TokenType::RIGHT_PAREN);
     addTransition(0, CharClass::LBracket, 39);
-    setFinal(39, TokenType::LBracket);
+    setFinal(39, TokenType::LEFT_BRACKET);
     addTransition(0, CharClass::RBracket, 40);
-    setFinal(40, TokenType::RBracket);
+    setFinal(40, TokenType::RIGHT_BRACKET);
     addTransition(0, CharClass::LCurly, 41);
-    setFinal(41, TokenType::LCurly);
+    setFinal(41, TokenType::LEFT_BRACE);
     addTransition(0, CharClass::RCurly, 42);
-    setFinal(42, TokenType::RCurly);
+    setFinal(42, TokenType::RIGHT_BRACE);
     addTransition(0, CharClass::Semicolon, 43);
-    setFinal(43, TokenType::Semicolon);
+    setFinal(43, TokenType::SEMICOLON);
     addTransition(0, CharClass::Comma, 44);
-    setFinal(44, TokenType::Comma);
+    setFinal(44, TokenType::COMMA);
     addTransition(0, CharClass::Colon, 45);
-    setFinal(45, TokenType::Colon);
+    setFinal(45, TokenType::COLON);
     addTransition(0, CharClass::Question, 46);
-    setFinal(46, TokenType::Question);
+    setFinal(46, TokenType::QUESTION);
 
     // Relational
     // <=
     addTransition(0, CharClass::Less, 21);
-    setFinal(21, TokenType::Less);
+    setFinal(21, TokenType::LEFT_ANGLE);
     addTransition(21, CharClass::Equal, 22);
-    setFinal(22, TokenType::LessEqual);
+    setFinal(22, TokenType::LEFT_ANGLE_EQUAL);
 
     // >=
     addTransition(0, CharClass::Greater, 23);
-    setFinal(23, TokenType::Greater);
+    setFinal(23, TokenType::RIGHT_ANGLE);
     addTransition(23, CharClass::Equal, 24);
-    setFinal(24, TokenType::GreaterEqual);
+    setFinal(24, TokenType::RIGHT_ANGLE_EQUAL);
 
     // !=
     addTransition(0, CharClass::Exclamation, 25);
-    setFinal(25, TokenType::Not);
+    setFinal(25, TokenType::NOT);
     addTransition(25, CharClass::Equal, 26);
-    setFinal(26, TokenType::NotEqual);
+    setFinal(26, TokenType::EXCLAMATION_EQUAL);
 
     // ==
     addTransition(0, CharClass::Equal, 27);
-    setFinal(27, TokenType::Assign);
+    setFinal(27, TokenType::ASSIGN);
     addTransition(27, CharClass::Equal, 28);
-    setFinal(28, TokenType::Equal);
+    setFinal(28, TokenType::EQUAL);
 
     // Identifier
     addTransition(0, CharClass::Letter, 29);
@@ -168,30 +168,30 @@ void DFA::buildLexerDFA()
     addTransition(29, CharClass::Letter, 29);
     addTransition(29, CharClass::Digit, 29);
     addTransition(29, CharClass::Underscore, 29);
-    setFinal(29, TokenType::Identifier);
+    setFinal(29, TokenType::IDENTIFIER);
 
     // Arithmetic operations
     // *=
     addTransition(0, CharClass::Star, 30);
-    setFinal(30, TokenType::Star);
+    setFinal(30, TokenType::STAR);
     addTransition(30, CharClass::Equal, 31);
-    setFinal(31, TokenType::StarAssign);
+    setFinal(31, TokenType::STAR_EQUAL);
 
     // ^=
     addTransition(0, CharClass::Caret, 32);
-    setFinal(32, TokenType::Caret);
+    setFinal(32, TokenType::CARET);
     addTransition(32, CharClass::Equal, 33);
-    setFinal(33, TokenType::CaretAssign);
+    setFinal(33, TokenType::CARET_EQUAL);
 
     // %=
     addTransition(0, CharClass::Percent, 34);
-    setFinal(34, TokenType::Modulo);
+    setFinal(34, TokenType::PERCENT);
     addTransition(34, CharClass::Equal, 35);
-    setFinal(35, TokenType::PercentAssign);
+    setFinal(35, TokenType::PERCENT_EQUAL);
 
     // Point and Range
     addTransition(0, CharClass::Point, 36);
-    setFinal(36, TokenType::Point);
+    setFinal(36, TokenType::POINT);
     addTransition(36, CharClass::Point, 37);
-    setFinal(37, TokenType::Range);
+    setFinal(37, TokenType::RANGE);
 }
