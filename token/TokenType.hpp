@@ -72,6 +72,7 @@ enum class TokenType {
     RANGE, // ..
     SEMICOLON, // ;
     COLON, // :
+    EXCLAMATION, // !
     QUESTION, // ?
     APOSTROPHE, // '
     AND_SIGN, // &
@@ -153,6 +154,7 @@ inline std::string to_string(TokenType tokenType) {
         case TokenType::RANGE: return "RANGE";
         case TokenType::SEMICOLON: return "SEMICOLON";
         case TokenType::COLON: return "COLON";
+        case TokenType::EXCLAMATION: return "EXCLAMATION";
         case TokenType::QUESTION: return "QUESTION";
         case TokenType::APOSTROPHE: return "APOSTROPHE";
         case TokenType::AND_SIGN: return "AND_SIGN";

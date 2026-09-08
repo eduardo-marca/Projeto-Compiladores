@@ -5,7 +5,7 @@
 
 #include <optional>
 #include "Token.hpp"
-#include "CharClass.hpp"
+#include "CharSet.hpp"
 
 using State = int;
 
@@ -15,11 +15,11 @@ public:
 
     DFA(State initial) : initialState(initial) {}
 
-    void addTransition(State from, CharClass symbol, State to);
+    void addTransition(State from, CharSet symbols, State to);
 
     void setFinal(State state, TokenType type);
 
-    std::optional<State> transition(State state, CharClass symbol) const;
+    std::optional<State> transition(State state, Symbol symbol) const;
 
     bool isFinal(State state) const;
 
@@ -34,7 +34,7 @@ private:
     
     std::unordered_map<
         State,
-        std::unordered_map<CharClass, State>
+        std::unordered_map<Symbol, State>
     > transitions;
     
     std::unordered_map<State, TokenType> finalStates;

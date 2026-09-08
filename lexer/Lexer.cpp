@@ -48,7 +48,7 @@ Token Lexer::nextToken()
     while(position < source.size()) {
         char c = source[position];
 
-        auto next = dfa.transition(state, classify(c));
+        auto next = dfa.transition(state, c);
 
         if(!next.has_value())
             break;
