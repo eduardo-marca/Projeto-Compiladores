@@ -25,6 +25,7 @@ Lexer::Lexer(const std::string& source) : source(source), dfa(0)
     reserved_words["Bool"] = TokenType::BoolType;
     reserved_words["Char"] = TokenType::CharType;
     reserved_words["String"] = TokenType::StringType;
+    reserved_words["Void"] = TokenType::VoidType;
     reserved_words["true"] = TokenType::TrueLiteral;
     reserved_words["false"] = TokenType::FalseLiteral;
 }
@@ -59,6 +60,8 @@ Token Lexer::nextToken()
             lastFinalPosition = position;
             lastToken = dfa.tokenType(state);
         }
+
+        //std::cout << state << std::endl;
     }
 
     if(!lastToken.has_value()) {

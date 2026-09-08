@@ -76,6 +76,7 @@ void DFA::buildLexerDFA()
     addTransition(12, CharClass::Letter, 12);
     addTransition(12, CharClass::Space, 12);
     addTransition(12, CharClass::Tab, 12);
+    addTransition(12, CharClass::Colon, 12);
     addTransition(12, CharClass::Quote, 13);
     setFinal(13, TokenType::StringLiteral);
 
@@ -89,7 +90,22 @@ void DFA::buildLexerDFA()
     addTransition(16, CharClass::Letter, 16);
     addTransition(16, CharClass::Space, 16);
     addTransition(16, CharClass::Tab, 16);
+    addTransition(16, CharClass::LParen, 16);
+    addTransition(16, CharClass::RParen, 16);
+    addTransition(16, CharClass::Colon, 16);
     setFinal(16, TokenType::Comment);
+    addTransition(15, CharClass::Star, 47);
+    addTransition(47, CharClass::Letter, 47);
+    addTransition(47, CharClass::Digit, 47);
+    addTransition(47, CharClass::Space, 47);
+    addTransition(47, CharClass::Tab, 47);
+    addTransition(47, CharClass::EndOfLine, 47);
+    addTransition(47, CharClass::LParen, 47);
+    addTransition(47, CharClass::RParen, 47);
+    addTransition(47, CharClass::Colon, 47);
+    addTransition(47, CharClass::Star, 48);
+    addTransition(48, CharClass::Slash, 49);
+    setFinal(49, TokenType::Comment);
 
     // Plus
     addTransition(0, CharClass::Plus, 17);
@@ -169,7 +185,7 @@ void DFA::buildLexerDFA()
 
     // %=
     addTransition(0, CharClass::Percent, 34);
-    setFinal(34, TokenType::Percent);
+    setFinal(34, TokenType::Modulo);
     addTransition(34, CharClass::Equal, 35);
     setFinal(35, TokenType::PercentAssign);
 

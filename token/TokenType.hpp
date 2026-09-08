@@ -35,6 +35,7 @@ enum class TokenType {
     BoolType, // Bool
     CharType, // Char
     StringType, // String
+    VoidType, // Void
 
     // Arithmetic operators
     Plus, // +
@@ -42,7 +43,7 @@ enum class TokenType {
     Star, // *
     Slash, // /
     Caret, // ^
-    Percent, // %
+    Modulo, // %
     PlusAssign, // +=
     MinusAssign, // - =
     StarAssign, // *=
@@ -101,6 +102,7 @@ inline std::string to_string(TokenType tokenType) {
         case TokenType::Or: return "Or";
         case TokenType::And: return "And";
         case TokenType::Xor: return "Xor";
+        case TokenType::As: return "As";
         case TokenType::Comment: return "Comment";
         case TokenType::IntLiteral: return "IntLiteral";
         case TokenType::FloatLiteral: return "FloatLiteral";
@@ -113,12 +115,13 @@ inline std::string to_string(TokenType tokenType) {
         case TokenType::BoolType: return "BoolType";
         case TokenType::CharType: return "CharType";
         case TokenType::StringType: return "StringType";
+        case TokenType::VoidType: return "VoidType";
         case TokenType::Plus: return "Plus";
         case TokenType::Minus: return "Minus";
         case TokenType::Star: return "Star";
         case TokenType::Slash: return "Slash";
         case TokenType::Caret: return "Caret";
-        case TokenType::Percent: return "Percent";
+        case TokenType::Modulo: return "Modulo";
         case TokenType::PlusAssign: return "PlusAssign";
         case TokenType::MinusAssign: return "MinusAssign";
         case TokenType::StarAssign: return "StarAssign";
@@ -152,6 +155,6 @@ inline std::string to_string(TokenType tokenType) {
         case TokenType::RCurly: return "RCurly";
         case TokenType::Unknown: return "Unknown";
         case TokenType::EndOfFile: return "EndOfFile";
-        default:           return "Unknown";
+        default: return "Unknown";
     }
 }
