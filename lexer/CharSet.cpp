@@ -23,55 +23,6 @@ CharSet CharSet::none()
     return CharSet{};
 }
 
-CharSet CharSet::digit()
-{
-    return CharSet::range('0', '9');
-}
-
-CharSet CharSet::letter()
-{
-    return CharSet::range('a', 'z')
-            .unite(CharSet::range('A', 'Z'));
-}
-
-CharSet CharSet::whitespace()
-{
-    return CharSet{}
-        .add(' ')
-        .add('\t')
-        .add('\n');
-}
-
-CharSet CharSet::identifierStart()
-{
-    return CharSet::letter()
-            .unite(CharSet::single('_'));
-}
-
-CharSet CharSet::identifier()
-{
-    return CharSet::identifierStart()
-            .unite(CharSet::digit());
-}
-
-CharSet CharSet::stringChar()
-{
-    return CharSet::any()
-        .remove('"')
-        .remove('\n');
-}
-
-CharSet CharSet::lineCommentCharacter()
-{
-    return CharSet::any()
-        .remove('\n');
-}
-
-CharSet CharSet::blockCommentCharacter()
-{
-    return CharSet::any();
-}
-
 CharSet CharSet::range(char first, char last)
 {
     CharSet cs;

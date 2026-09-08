@@ -6,14 +6,6 @@ class CharSet {
 public:
     static CharSet any();
     static CharSet none();
-    static CharSet digit();
-    static CharSet letter();
-    static CharSet whitespace();
-    static CharSet identifierStart();
-    static CharSet identifier();
-    static CharSet stringChar();
-    static CharSet lineCommentCharacter();
-    static CharSet blockCommentCharacter();
     
     static CharSet range(char first, char last);
     static CharSet single(char c);
@@ -33,3 +25,59 @@ public:
 private:
     std::array<bool, 256> chars{};
 };
+
+namespace CharSets {
+
+    inline CharSet Digit() {
+        return CharSet::range('0', '9');
+    }
+
+    inline CharSet Lowercase() {
+        return CharSet::range('a', 'z');
+    }
+
+    inline CharSet Uppercase() {
+        return CharSet::range('A', 'Z');
+    }
+
+    inline CharSet Letter() {
+        return Lowercase()
+            .unite(Uppercase());
+    }
+
+    inline CharSet IdentifierStart() {
+        return Letter()
+            .add('_');
+    }
+
+    inline CharSet IdentifierContinue() {
+        return IdentifierStart()
+            .unite(Digit());
+    }
+
+    inline CharSet StringCharacter() {
+        return CharSet::any()
+            .remove('"')
+            .remove('\n');
+    }
+
+    inline CharSet LineCommentCharacter() {
+        return CharSet::any()
+            .remove('\n');
+    }
+
+    inline CharSet BlockCommentCharacter() {
+        return CharSet::any();
+    }
+
+    inline CharSet Whitespace() {
+        return CharSet::single(' ')
+            .add('\t')
+            .add('\n')
+            .add('\r');
+    }
+
+    inline CharSet Any() {
+        return CharSet::any();
+    }
+}

@@ -55,25 +55,25 @@ void DFA::buildLexerDFA()
     setFinal(4, TokenType::DECREMENT);
 
     // Int and float literals
-    addTransition(3, CharSet::digit(), 5);
-    addTransition(0, CharSet::digit(), 5);
-    addTransition(5, CharSet::digit(), 5);
+    addTransition(3, CharSets::Digit(), 5);
+    addTransition(0, CharSets::Digit(), 5);
+    addTransition(5, CharSets::Digit(), 5);
     setFinal(5, TokenType::INT_LITERAL);
     addTransition(5, CharSet::single('.'), 6);
-    addTransition(6, CharSet::digit(), 7);
-    addTransition(7, CharSet::digit(), 7);
+    addTransition(6, CharSets::Digit(), 7);
+    addTransition(7, CharSets::Digit(), 7);
     setFinal(7, TokenType::FLOAT_LITERAL);
 
     // Char literal
     addTransition(0, CharSet::single('\''), 8);
-    addTransition(8, CharSet::stringChar(), 9);
+    addTransition(8, CharSets::StringCharacter(), 9);
     addTransition(9, CharSet::single('\''), 10);
     setFinal(10, TokenType::CHAR_LITERAL);
 
     // String literal
     addTransition(0, CharSet::single('\"'), 11);
-    addTransition(11, CharSet::stringChar(), 12);
-    addTransition(12, CharSet::stringChar(), 12);
+    addTransition(11, CharSets::StringCharacter(), 12);
+    addTransition(12, CharSets::StringCharacter(), 12);
     addTransition(12, CharSet::single('\"'), 13);
     setFinal(13, TokenType::STRING_LITERAL);
 
@@ -83,12 +83,12 @@ void DFA::buildLexerDFA()
     addTransition(15, CharSet::single('='), 14);
     setFinal(14, TokenType::SLASH_EQUAL);
     addTransition(15, CharSet::single('/'), 16);
-    addTransition(16, CharSet::lineCommentCharacter(), 16);
+    addTransition(16, CharSets::LineCommentCharacter(), 16);
     setFinal(16, TokenType::COMMENT);
     addTransition(15, CharSet::single('*'), 17);
-    addTransition(17, CharSet::blockCommentCharacter().remove('*'), 17);
+    addTransition(17, CharSets::BlockCommentCharacter().remove('*'), 17);
     addTransition(17, CharSet::single('*'), 18);
-    addTransition(18, CharSet::blockCommentCharacter().remove('*').remove('/'), 17);
+    addTransition(18, CharSets::BlockCommentCharacter().remove('*').remove('/'), 17);
     addTransition(18, CharSet::single('*'), 18);
     addTransition(18, CharSet::single('/'), 19);
     setFinal(19, TokenType::COMMENT);
@@ -151,8 +151,8 @@ void DFA::buildLexerDFA()
     setFinal(38, TokenType::RANGE);
 
     // Identifier
-    addTransition(0, CharSet::identifierStart(), 39);
-    addTransition(39, CharSet::identifier(), 39);
+    addTransition(0, CharSets::IdentifierStart(), 39);
+    addTransition(39, CharSets::IdentifierContinue(), 39);
     setFinal(39, TokenType::IDENTIFIER);
 
     // Unique tokens
