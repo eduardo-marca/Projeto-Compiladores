@@ -55,7 +55,6 @@ void DFA::buildLexerDFA()
     setFinal(4, TokenType::DECREMENT);
 
     // Int and float literals
-    addTransition(3, CharSets::Digit(), 5);
     addTransition(0, CharSets::Digit(), 5);
     addTransition(5, CharSets::Digit(), 5);
     setFinal(5, TokenType::INT_LITERAL);
@@ -182,7 +181,4 @@ void DFA::buildLexerDFA()
 
     addTransition(0, CharSet::single(':'), 48);
     setFinal(48, TokenType::COLON);
-
-    addTransition(0, CharSet::single('?'), 49);
-    setFinal(49, TokenType::QUESTION);
 }

@@ -1,3 +1,4 @@
+// function to verify if a number is prime
 fn isPrime(n: Int) -> Bool {
     if n < 2 {
         return false;
@@ -18,6 +19,7 @@ fn isPrime(n: Int) -> Bool {
 
 var n = 2;
 
+// find the first 100 primes
 while n <= 100 {
     if isPrime(n) {
         print(n);

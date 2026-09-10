@@ -6,7 +6,7 @@
 #include "Lexer.hpp"
 
 int main() {
-    std::ifstream file("codes/ex4.m");
+    std::ifstream file("codes/ex5.m");
 
     if(!file.is_open()) {
         std::cerr << "Failed to open the file." << std::endl;
@@ -14,7 +14,7 @@ int main() {
     }
 
     std::stringstream buffer;
-    buffer << file.rdbuf(); // Read the entire file buffer into the stringstream
+    buffer << file.rdbuf();
     std::string file_contents = buffer.str();
 
     Lexer lexer(file_contents);

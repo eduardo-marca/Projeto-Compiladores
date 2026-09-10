@@ -73,16 +73,8 @@ enum class TokenType {
     SEMICOLON, // ;
     COLON, // :
     EXCLAMATION, // !
-    QUESTION, // ?
     APOSTROPHE, // '
-    AND_SIGN, // &
     ARROW, // ->
-    AT, // @
-    HASH, // #
-    BAR, // |
-    TILDE, // ~
-    DOLLAR, // $
-    BACKSLASH,
 
     LEFT_PAREN, // (
     RIGHT_PAREN, // )
@@ -155,16 +147,8 @@ inline std::string to_string(TokenType tokenType) {
         case TokenType::SEMICOLON: return "SEMICOLON";
         case TokenType::COLON: return "COLON";
         case TokenType::EXCLAMATION: return "EXCLAMATION";
-        case TokenType::QUESTION: return "QUESTION";
         case TokenType::APOSTROPHE: return "APOSTROPHE";
-        case TokenType::AND_SIGN: return "AND_SIGN";
         case TokenType::ARROW: return "ARROW";
-        case TokenType::AT: return "AT";
-        case TokenType::HASH: return "HASH";
-        case TokenType::BAR: return "BAR";
-        case TokenType::TILDE: return "TILDE";
-        case TokenType::DOLLAR: return "DOLLAR";
-        case TokenType::BACKSLASH: return "BACKSLASH";
         case TokenType::LEFT_PAREN: return "LEFT_PAREN";
         case TokenType::RIGHT_PAREN: return "RIGHT_PAREN";
         case TokenType::LEFT_BRACKET: return "LEFT_BRACKET";
