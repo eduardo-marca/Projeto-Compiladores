@@ -64,16 +64,11 @@ enum class TokenType {
     EXCLAMATION_EQUAL, // !=
     
     // Unique tokens
-    UNDERSCORE, // _
     ASSIGN, // =
-    QUOTE, // "
     COMMA, // ,
-    POINT, // .
     RANGE, // ..
     SEMICOLON, // ;
     COLON, // :
-    EXCLAMATION, // !
-    APOSTROPHE, // '
     ARROW, // ->
 
     LEFT_PAREN, // (
@@ -138,16 +133,11 @@ inline std::string to_string(TokenType tokenType) {
         case TokenType::LEFT_ANGLE_EQUAL: return "LEFT_ANGLE_EQUAL";
         case TokenType::RIGHT_ANGLE_EQUAL: return "RIGHT_ANGLE_EQUAL";
         case TokenType::EXCLAMATION_EQUAL: return "EXCLAMATION_EQUAL";
-        case TokenType::UNDERSCORE: return "UNDERSCORE";
         case TokenType::ASSIGN: return "ASSIGN";
-        case TokenType::QUOTE: return "QUOTE";
         case TokenType::COMMA: return "COMMA";
-        case TokenType::POINT: return "POINT";
         case TokenType::RANGE: return "RANGE";
         case TokenType::SEMICOLON: return "SEMICOLON";
         case TokenType::COLON: return "COLON";
-        case TokenType::EXCLAMATION: return "EXCLAMATION";
-        case TokenType::APOSTROPHE: return "APOSTROPHE";
         case TokenType::ARROW: return "ARROW";
         case TokenType::LEFT_PAREN: return "LEFT_PAREN";
         case TokenType::RIGHT_PAREN: return "RIGHT_PAREN";

@@ -115,7 +115,6 @@ void DFA::buildLexerDFA()
 
     // !=
     addTransition(0, CharSet::single('!'), 27);
-    setFinal(27, TokenType::EXCLAMATION);
     addTransition(27, CharSet::single('='), 28);
     setFinal(28, TokenType::EXCLAMATION_EQUAL);
 
@@ -145,7 +144,6 @@ void DFA::buildLexerDFA()
 
     // ..
     addTransition(0, CharSet::single('.'), 37);
-    setFinal(37, TokenType::POINT);
     addTransition(37, CharSet::single('.'), 38);
     setFinal(38, TokenType::RANGE);
 
