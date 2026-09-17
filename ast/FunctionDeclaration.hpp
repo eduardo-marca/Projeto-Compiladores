@@ -1,7 +1,20 @@
 #pragma once
 
-#include "Statement.hpp"
+#include "Declaration.hpp"
+#include "Type.hpp"
+#include "BlockStatement.hpp"
+#include "Parameter.hpp"
 
-class FunctionDeclaration : public Statement {
-    
+#include <string>
+#include <vector>
+
+class FunctionDeclaration : public Declaration {
+public:
+    std::string name;
+
+    std::vector<Parameter> parameters;
+
+    Type returnType;
+
+    std::unique_ptr<BlockStatement> body;
 };

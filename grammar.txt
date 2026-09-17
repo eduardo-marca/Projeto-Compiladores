@@ -1,0 +1,85 @@
+program ::= statement_list
+
+statement_list ::= empty | statement_list statement
+
+statement ::= variableDeclaration
+            | functionDeclaration
+            | expressionStatement
+            | ifStatement
+            | whileStatement
+            | forStatement
+            | functionCall
+            | block
+
+block ::= "{" statement_list "}"
+
+variableDeclaration ::= variableMutability optionalTypeDeclaration optionalVariableInitialization ";"
+
+variableMutability ::= "let" | "var"
+
+optionalVariableType ::= empty | ":" type
+
+optionalVariableInitialization ::= empty | "=" expression
+
+functionDeclaration ::= "fn" identifier "(" parameterList? ")" "->" type block ;
+
+parameterList ::= parameter ("," parameter)* ;
+
+parameter ::= identifier ":" type ;
+
+expressionStatement ::= expression ";"
+
+ifStatement ::= "if" expression block optionalElseBlock
+
+optionalElseBlock ::= empty | "else" block
+
+whileStatement ::= "while" expression block
+
+forStatement ::= "for" forControl block ;
+
+forControl ::= traditionalFor
+             | iteratorFor ;
+
+traditionalFor ::= expression? ";" expression? ";" expression? ;
+
+iteratorFor ::= identifier "in" expression ;
+
+type ::= "Int"
+       | "Float"
+       | "Bool"
+       | "Char"
+       | "String"
+       | "Void"
+
+expression ::= assignment
+
+assignment ::= logicalXor "=" assignment
+
+logicalXor ::= logicalOr | logicalXor "xor" logicalOr
+
+logicalOr ::= logicalAnd | logicalOr "or" logicalAnd
+
+logicalAnd ::= equality | logicalAnd "and" equality
+
+equality ::= comparison | equality ("==" | "!=") comparison
+
+comparison ::= term | comparison ("<" | ">" | "<=" | ">=") term
+
+term ::= factor | term ("+" | "-") factor
+
+factor ::= power | factor ("*" | "/" | "%") power
+
+power ::= unary | unary "^" power
+
+unary ::= primary | ("not" | "-" | "+") unary
+
+primary ::= int_literal
+          | float_literal
+          | bool_literal
+          | char_literal
+          | string_literal
+          | identifier
+          | "(" expression ")"
+
+bool_literal ::= "true"
+               | "false"

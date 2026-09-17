@@ -3,14 +3,12 @@
 #include "Expression.hpp"
 #include "TokenType.hpp"
 
-class BinaryExpression : public Expression {
+class AssignmentExpression : public Expression {
 public:
-    virtual ~BinaryExpression() = default;
-
     ExpressionPtr left;
     TokenType op;
     ExpressionPtr right;
 
-    BinaryExpression(ExpressionPtr left, TokenType op, ExpressionPtr right)
+    AssignmentExpression(ExpressionPtr left, TokenType op, ExpressionPtr right)
         : left(std::move(left)), op(op), right(std::move(right)) {}
 };
