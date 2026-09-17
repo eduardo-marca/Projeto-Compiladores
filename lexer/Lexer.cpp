@@ -43,7 +43,7 @@ Token Lexer::nextToken()
     State state = dfa.getInitialState();
 
     std::size_t lastFinalPosition = start;
-    std::optional<TokenType> lastToken;
+    std::optional<TokenType> lastToken = std::nullopt;
 
     while(position < source.size()) {
         char c = source[position];
@@ -60,12 +60,11 @@ Token Lexer::nextToken()
             lastFinalPosition = position;
             lastToken = dfa.tokenType(state);
         }
-
-        //std::cout << state << std::endl;
     }
 
     if(!lastToken.has_value()) {
         std::cerr << "Could Not Recognize Token" << std::endl;
+        return Token(TokenType::UNKNOWN, "");
     }
 
     position = lastFinalPosition;

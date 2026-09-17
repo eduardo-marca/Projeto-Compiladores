@@ -80,7 +80,7 @@ enum class TokenType {
 
     END_OF_FILE,
 
-    Unknown
+    UNKNOWN
 };
 
 inline std::string to_string(TokenType tokenType) {
@@ -146,6 +146,6 @@ inline std::string to_string(TokenType tokenType) {
         case TokenType::LEFT_BRACE: return "LEFT_BRACE";
         case TokenType::RIGHT_BRACE: return "RIGHT_BRACE";
         case TokenType::END_OF_FILE: return "END_OF_FILE";
-        default: return "Unknown";
+        default: return "UNKNOWN";
     }
 }
