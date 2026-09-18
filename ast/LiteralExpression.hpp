@@ -2,6 +2,7 @@
 
 #include "Expression.hpp"
 #include "Value.hpp"
+#include "Token.hpp"
 
 class LiteralExpression : public Expression {
     Value value;

@@ -6,27 +6,38 @@
 #include "Expression.hpp"
 
 class Parser {
-public:
-    explicit Parser(std::vector<Token> tokens);
-
-    //Program parse();
-
 private:
     std::vector<Token> tokens;
     size_t current = 0;
 
+public:
+    explicit Parser(const std::vector<Token>& tokens) : tokens(tokens) {}
+
+    //Program parse();
+
+private:
+    // Navegação de tokens
     const Token& peek() const;
     const Token& previous() const;
 
+    bool atEnd() const;
+
+    const Token& advance();
+
     bool check(TokenType type) const;
-    bool match(TokenType type);
+    bool checkNext(TokenType type) const;
+    
+    bool match(TokenType type) const;
+    bool match(std::initializer_list<TokenType> types);
     bool match(std::vector<TokenType> types);
 
-    const Token& expect(TokenType type);
-    const Token& advance();
-    const Token& consume(TokenType type);
+    const Token& consume(TokenType type, std::string_view message);
+    //const Token& expect(TokenType type);
 
-    bool atEnd() const;
+    // tratamento de erros
+    ParseError error(const Token& token, std::string_view message);
+
+    void synchronize();
 
     // Grammar rules
     //Program parseProgram();

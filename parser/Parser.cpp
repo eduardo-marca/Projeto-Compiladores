@@ -3,6 +3,8 @@
 
 #include "BinaryExpression.hpp"
 #include "AssignmentExpression.hpp"
+#include "LiteralExpression.hpp"
+#include "IdentifierExpression.hpp"
 
 const Token &Parser::peek() const
 {
@@ -90,7 +92,79 @@ ExpressionPtr Parser::parseAssignment()
 
 ExpressionPtr Parser::parseLogicalOr()
 {
-    return ExpressionPtr();
+    auto left = parseLogicalXor();
+
+    while(match(TokenType::OR)) {
+        Token op = previous();
+
+        auto right = parseLogicalXor();
+
+        left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
+    }
+
+    return left;
+}
+
+ExpressionPtr Parser::parseLogicalXor()
+{
+    auto left = parseLogicalAnd();
+
+    while(match(TokenType::XOR)) {
+        Token op = previous();
+
+        auto right = parseLogicalAnd();
+
+        left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
+    }
+
+    return left;
+}
+
+ExpressionPtr Parser::parseLogicalAnd()
+{
+    auto left = parseEquality();
+
+    while(match(TokenType::AND)) {
+        Token op = previous();
+
+        auto right = parseEquality();
+
+        left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
+    }
+
+    return left;
+}
+
+ExpressionPtr Parser::parseEquality()
+{
+    auto left = parseComparison();
+
+    while(match({TokenType::EQUAL, TokenType::EXCLAMATION_EQUAL})) {
+        Token op = previous();
+
+        auto right = parseComparison();
+
+        left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
+    }
+
+    return left;
+}
+
+ExpressionPtr Parser::parseComparison()
+{
+    auto left = parseAdditive();
+
+    while(match({TokenType::LEFT_ANGLE, TokenType::LEFT_ANGLE_EQUAL,
+            TokenType::RIGHT_ANGLE, TokenType::RIGHT_ANGLE_EQUAL}
+    )) {
+        Token op = previous();
+
+        auto right = parseAdditive();
+
+        left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
+    }
+
+    return left;
 }
 
 ExpressionPtr Parser::parseAdditive()
@@ -125,5 +199,53 @@ ExpressionPtr Parser::parseMultiplicative()
 
 ExpressionPtr Parser::parsePower()
 {
-    return ExpressionPtr();
+    auto left = parseUnary();
+
+    while(match(TokenType::CARET)) {
+        Token op = previous();
+
+        auto right = parseUnary();
+
+        left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
+    }
+
+    return left;
+}
+
+ExpressionPtr Parser::parseUnary()
+{
+    auto left = parsePrimary();
+
+    while(match({TokenType::NOT, TokenType::MINUS, TokenType::PLUS})) {
+        Token op = previous();
+
+        auto right = parsePrimary();
+
+        left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
+    }
+
+    return left;
+}
+
+ExpressionPtr Parser::parsePrimary()
+{
+    if(match({TokenType::INT_LITERAL, TokenType::FLOAT_LITERAL, TokenType::TRUE_LITERAL,
+            TokenType::FALSE_LITERAL, TokenType::CHAR_LITERAL, TokenType::STRING_LITERAL}
+    )) {
+        Token token = previous();
+
+        return std::make_unique<LiteralExpression>(token);
+    }
+
+    if(match(TokenType::LEFT_PAREN)) {
+        auto expr = parseExpression();
+        if(match(TokenType::RIGHT_PAREN)) {
+            return expr;
+        }
+    }
+
+    if(match(TokenType::IDENTIFIER)) {
+        auto id = previous();
+        return std::make_unique<IdentifierExpression>(id.lexeme);
+    }
 }
