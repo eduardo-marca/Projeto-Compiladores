@@ -1,47 +1,110 @@
-program: stmt_list
+program ::= statement_list EOF
 
-stmt_list: empty | stmt_list stmt
+statement_list ::= empty | statement_list statement
 
-stmt:
-    expr ';'
-    | block
-    | IF expr stmt
-    | IF expr stmt ELSE stmt
-    | WHILE expr stmt
-    | FOR
+statement ::= variableDeclaration
+            | functionDeclaration
+            | expressionStatement
+            | ifStatement
+            | whileStatement
+            | forStatement
+            | returnStatement
+            | block
 
-block:
-    '{' stmt_list '}'
+block ::= "{" statement_list "}"
 
-expr:
-    IDENTIFIER '=' expr
-    | term
-    | term '+' expr
-    | term '-' expr
+variableDeclaration ::= variableMutability optionalVariableType optionalVariableInitialization ";"
 
-term:
-    fact
-    | term '*' fact
-    | term '/' fact
-    | term '%' fact
+variableMutability ::= "let" | "var"
 
-fact:
-    unit
-    | fact '^' unit
+optionalVariableType ::= empty | ":" type
 
-unit:
-    primary
-    | ( expr )
+optionalVariableInitialization ::= empty | "=" expression
 
-primary:
-    IDENTIFIER
-    | number
-    | boolean
+functionDeclaration ::= "fn" identifier "(" parameterList ")" "->" type block ;
 
-number:
-    INT_LITERAL
-    | FLOAT_LITERAL
+parameterList ::= empty | parameter parameterListTail ;
 
-boolean:
-    TRUE_LITERAL
-    | FALSE_LITERAL
+parameterListTail ::= empty | "," parameter parameterListTail
+
+parameter ::= identifier ":" type ;
+
+expressionStatement ::= expression ";"
+
+ifStatement ::= "if" expression block optionalElseBlock
+
+optionalElseBlock ::= empty | "else" block
+
+whileStatement ::= "while" expression block
+
+forStatement ::= "for" forControl block ;
+
+forControl ::= traditionalFor
+             | iteratorFor ;
+
+traditionalFor ::= optionalExpression ";" optionalExpression ";" optionalExpression ;
+
+optionalExpression ::= empty | expression
+
+iteratorFor ::= identifier "in" expression ;
+
+returnStatement ::= "return" optionalExpression ";" ;
+
+type ::= primitiveType
+       | arrayType ;
+
+primitiveType ::= "Int"
+                | "Float"
+                | "Bool"
+                | "Char"
+                | "String"
+                | "Void"
+
+arrayType
+    ::= primitiveType "[" optional_int_literal "]" ;
+
+optional_int_literal :== empty | int_literal
+
+expression ::= assignment
+
+assignment ::= logicalXor "=" assignment
+
+logicalXor ::= logicalOr | logicalXor "xor" logicalOr
+
+logicalOr ::= logicalAnd | logicalOr "or" logicalAnd
+
+logicalAnd ::= equality | logicalAnd "and" equality
+
+equality ::= comparison | equality ("==" | "!=") comparison
+
+comparison ::= range | comparison ("<" | ">" | "<=" | ">=") range
+
+range ::= term (".." term)? ;
+
+term ::= factor | term ("+" | "-") factor
+
+factor ::= power | factor ("*" | "/" | "%") power
+
+power ::= cast | cast "^" power
+
+cast ::= unary ("as" type)* ;
+
+unary ::= primary | ("not" | "-" | "+") unary
+
+primary ::= int_literal
+          | float_literal
+          | bool_literal
+          | char_literal
+          | string_literal
+          | identifier
+          | "(" expression ")"
+          | functionCall
+
+functionCall ::= identifier "(" argumentList ")"
+
+argumentList ::= empty | primary argumentListTail
+
+argumentListTail ::= empty | primary "," argumentListTail
+
+bool_literal ::= "true"
+               | "false"

@@ -1,0 +1,187 @@
+program
+    ::= declaration* EOF ;
+
+declaration
+    ::= functionDeclaration
+      | variableDeclaration ;
+
+variableDeclaration
+    ::= "let" identifier
+        (
+            ":" type "=" expression
+          | "=" expression
+        )
+        ";"
+    
+     | "var" identifier
+        (
+            ":" type ("=" expression)?
+          | "=" expression
+        )
+        ";" ;
+
+type
+    ::= primitiveType
+      | arrayType ;
+
+primitiveType
+    ::= "Int"
+      | "Float"
+      | "Bool"
+      | "Char"
+      | "String"
+      | "Void" ;
+
+arrayType
+    ::= primitiveType "[" "]"
+      | primitiveType "[" integer "]" ;
+
+functionDeclaration
+    ::= "fn"
+        identifier
+        "(" parameterList? ")"
+        "->"
+        type
+        block ;
+
+parameterList
+    ::= parameter ("," parameter)* ;
+
+parameter
+    ::= identifier ":" type ;
+
+statement
+    ::= variableDeclaration
+      | ifStatement
+      | whileStatement
+      | forStatement
+      | returnStatement
+      | block
+      | expressionStatement ;
+
+block
+    ::= "{" statement* "}" ;
+
+ifStatement
+    ::= "if"
+        expression
+        block
+        ("else" block)? ;
+
+whileStatement
+    ::= "while"
+        expression
+        block ;
+
+forStatement
+    ::= "for" forControl block ;
+
+forControl
+    ::= traditionalFor
+      | iteratorFor ;
+
+traditionalFor
+    ::= expression?
+        ";"
+        expression?
+        ";"
+        expression? ;
+
+iteratorFor
+    ::= identifier
+        "in"
+        expression ;
+
+returnStatement
+    ::= "return" expression? ";" ;
+
+expression
+    ::= assignment ;
+
+assignment
+    ::= logicalOr assignmentOperator assignment
+      | logicalOr ;
+
+assignmentOperator
+    ::= "="
+      | "+="
+      | "-="
+      | "*="
+      | "/="
+      | "^="
+      | "%=" ;
+
+logicalOr
+    ::= logicalXor ("or" logicalXor)* ;
+
+logicalXor
+    ::= logicalAnd ("xor" logicalAnd)* ;
+
+logicalAnd
+    ::= equality ("and" equality)* ;
+
+unary
+    ::= "not" unary
+      | "-" unary
+      | "+" unary
+      | postfix ;
+
+equality
+    ::= comparison (equalityOperator comparison)* ;
+
+equalityOperator
+    ::= "=="
+      | "!=" ;
+
+comparison
+    ::= range (comparisonOperator range)* ;
+
+comparisonOperator
+    ::= "<"
+     | "<="
+     | ">"
+     | ">=" ;
+
+range
+    ::= additive (".." additive)? ;
+
+additive
+    ::= multiplicative (("+" | "-") multiplicative)* ;
+
+multiplicative
+    ::= power (("*" | "/" | "%") power)* ;
+
+power
+    ::= unary ("^" power)? ;
+
+cast
+    ::= postfix ("as" type)* ;
+
+postfix
+    ::= primary postfixOperation* ;
+
+postfixOperation
+    ::= "++"
+      | "--"
+      | "[" expression "]"
+      | "(" argumentList? ")" ;
+
+primary
+    ::= integerLiteral
+      | floatLiteral
+      | booleanLiteral
+      | charLiteral
+      | stringLiteral
+      | identifier
+      | arrayLiteral
+      | "(" expression ")" ;
+
+booleanLiteral
+    ::= "true"
+      | "false" ;
+
+arrayLiteral
+    ::= "[" expressionList? "]" ;
+
+expressionList
+    ::= expression ("," expression)* ;
