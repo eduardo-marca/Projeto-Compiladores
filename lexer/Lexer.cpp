@@ -64,7 +64,7 @@ Token Lexer::nextToken()
 
     if(!lastToken.has_value()) {
         std::cerr << "Could Not Recognize Token" << std::endl;
-        return Token(TokenType::UNKNOWN, "");
+        exit(-1);
     }
 
     position = lastFinalPosition;

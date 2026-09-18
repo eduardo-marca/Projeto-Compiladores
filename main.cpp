@@ -6,7 +6,7 @@
 #include "Lexer.hpp"
 
 int main() {
-    std::ifstream file("codes/ex1.m");
+    std::ifstream file("codes/ex0.m");
 
     if(!file.is_open()) {
         std::cerr << "Failed to open the file." << std::endl;
@@ -20,17 +20,9 @@ int main() {
     Lexer lexer(file_contents);
 
     Token token = lexer.nextToken();
-    if(token.type == TokenType::UNKNOWN) {
-        std::cerr << "Unknown Token" << std::endl;
-        return -1;
-    }
     while(token.type != TokenType::END_OF_FILE) {
         std::cout << token.ToString() << std::endl;
         token = lexer.nextToken();
-        if(token.type == TokenType::UNKNOWN) {
-            std::cerr << "Unknown Token" << std::endl;
-            return -1;
-        }
     }
     std::cout << token.ToString() << std::endl;
 
