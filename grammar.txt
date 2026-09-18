@@ -1,4 +1,4 @@
-program ::= statement_list
+program ::= statement_list EOF
 
 statement_list ::= empty | statement_list statement
 
@@ -8,12 +8,12 @@ statement ::= variableDeclaration
             | ifStatement
             | whileStatement
             | forStatement
-            | functionCall
+            | returnStatement
             | block
 
 block ::= "{" statement_list "}"
 
-variableDeclaration ::= variableMutability optionalTypeDeclaration optionalVariableInitialization ";"
+variableDeclaration ::= variableMutability optionalVariableType optionalVariableInitialization ";"
 
 variableMutability ::= "let" | "var"
 
@@ -21,9 +21,11 @@ optionalVariableType ::= empty | ":" type
 
 optionalVariableInitialization ::= empty | "=" expression
 
-functionDeclaration ::= "fn" identifier "(" parameterList? ")" "->" type block ;
+functionDeclaration ::= "fn" identifier "(" parameterList ")" "->" type block ;
 
-parameterList ::= parameter ("," parameter)* ;
+parameterList ::= empty | parameter parameterListTail ;
+
+parameterListTail ::= empty | "," parameter parameterListTail
 
 parameter ::= identifier ":" type ;
 
@@ -40,16 +42,28 @@ forStatement ::= "for" forControl block ;
 forControl ::= traditionalFor
              | iteratorFor ;
 
-traditionalFor ::= expression? ";" expression? ";" expression? ;
+traditionalFor ::= optionalExpression ";" optionalExpression ";" optionalExpression ;
+
+optionalExpression ::= empty | expression
 
 iteratorFor ::= identifier "in" expression ;
 
-type ::= "Int"
-       | "Float"
-       | "Bool"
-       | "Char"
-       | "String"
-       | "Void"
+returnStatement ::= "return" optionalExpression ";" ;
+
+type ::= primitiveType
+       | arrayType ;
+
+primitiveType ::= "Int"
+                | "Float"
+                | "Bool"
+                | "Char"
+                | "String"
+                | "Void"
+
+arrayType
+    ::= primitiveType "[" optional_int_literal "]" ;
+
+optional_int_literal :== empty | int_literal
 
 expression ::= assignment
 
@@ -63,13 +77,17 @@ logicalAnd ::= equality | logicalAnd "and" equality
 
 equality ::= comparison | equality ("==" | "!=") comparison
 
-comparison ::= term | comparison ("<" | ">" | "<=" | ">=") term
+comparison ::= range | comparison ("<" | ">" | "<=" | ">=") range
+
+range ::= term (".." term)? ;
 
 term ::= factor | term ("+" | "-") factor
 
 factor ::= power | factor ("*" | "/" | "%") power
 
-power ::= unary | unary "^" power
+power ::= cast | cast "^" power
+
+cast ::= unary ("as" type)* ;
 
 unary ::= primary | ("not" | "-" | "+") unary
 
@@ -80,6 +98,13 @@ primary ::= int_literal
           | string_literal
           | identifier
           | "(" expression ")"
+          | functionCall
+
+functionCall ::= identifier "(" argumentList ")"
+
+argumentList ::= empty | primary argumentListTail
+
+argumentListTail ::= empty | primary "," argumentListTail
 
 bool_literal ::= "true"
                | "false"
