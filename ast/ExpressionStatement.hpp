@@ -10,4 +10,8 @@ public:
     ExpressionPtr expression;
 
     ExpressionStatement(ExpressionPtr expression) : expression(std::move(expression)) {}
+
+    std::string To_String() const override {
+        return "ExpressionStatement(" + expression->To_String() + ")";
+    }
 };

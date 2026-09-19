@@ -4,9 +4,10 @@
 #include <string>
 
 #include "Lexer.hpp"
+#include "Parser.hpp"
 
 int main() {
-    std::ifstream file("codes/ex0.m");
+    std::ifstream file("codes/ex6.m");
 
     if(!file.is_open()) {
         std::cerr << "Failed to open the file." << std::endl;
@@ -19,12 +20,16 @@ int main() {
 
     Lexer lexer(file_contents);
 
-    Token token = lexer.nextToken();
-    while(token.type != TokenType::END_OF_FILE) {
-        std::cout << token.ToString() << std::endl;
-        token = lexer.nextToken();
+    auto tokens = lexer.getTokens();
+    //for(auto token : tokens) std::cout << token.ToString() << std::endl;
+
+    Parser parser(tokens);
+
+    auto program = parser.parse();
+
+    for(auto& statement : *(program->statements)) {
+        std::cout << statement->To_String() << std::endl;
     }
-    std::cout << token.ToString() << std::endl;
 
     return 0;
 }

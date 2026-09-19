@@ -5,10 +5,13 @@
 
 #include <unordered_map>
 #include <sstream>
+#include <vector>
 
 class Lexer {
 public:
     explicit Lexer(const std::string& source);
+
+    std::vector<Token> getTokens();
 
     // acha o próximo token do código
     Token nextToken();

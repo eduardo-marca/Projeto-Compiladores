@@ -9,4 +9,8 @@ class LiteralExpression : public Expression {
 
 public:
     LiteralExpression(Value value) : value(std::move(value)) {}
+
+    std::string To_String() const override {
+        return "Literal(" + to_string(value.type) + ", " + value.lexeme + ")";
+    }
 };

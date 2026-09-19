@@ -337,22 +337,22 @@ ExpressionPtr Parser::parsePrimary()
 Type Parser::parseType()
 {
     if (match(TokenType::INT_TYPE))
-        return Type(Type::Kind::Int);
+        return Type::Int;
     
     if (match(TokenType::FLOAT_TYPE))
-        return Type(Type::Kind::Float);
+        return Type::Float;
 
     if (match(TokenType::BOOL_TYPE))
-        return Type(Type::Kind::Bool);
+        return Type::Bool;
 
     if (match(TokenType::CHAR_TYPE))
-        return Type(Type::Kind::Char);
+        return Type::Char;
 
     if (match(TokenType::STRING_TYPE))
-        return Type(Type::Kind::String);
+        return Type::String;
 
     if (match(TokenType::VOID_TYPE))
-        return Type(Type::Kind::Void);
+        return Type::Void;
 
     throw error(peek(), "Expected type.");
 }
