@@ -285,18 +285,24 @@ ExpressionPtr Parser::parseUnary()
 
 ExpressionPtr Parser::parsePrimary()
 {
-    if(match({TokenType::INT_LITERAL, TokenType::FLOAT_LITERAL, TokenType::TRUE_LITERAL,
-            TokenType::FALSE_LITERAL, TokenType::CHAR_LITERAL, TokenType::STRING_LITERAL}
-    )) {
-        Token token = previous();
-
-        //return std::make_unique<LiteralExpression>(token);
+    if (match({
+        TokenType::INT_LITERAL,
+        TokenType::FLOAT_LITERAL,
+        TokenType::TRUE_LITERAL,
+        TokenType::FALSE_LITERAL,
+        TokenType::CHAR_LITERAL,
+        TokenType::STRING_LITERAL
+    })) {
+        return std::make_unique<LiteralExpression>(previous().value);
     }
 
-    if(match(TokenType::LEFT_PAREN)) {
+    if (match(TokenType::LEFT_PAREN)) {
         auto expr = parseExpression();
         if(match(TokenType::RIGHT_PAREN)) {
             return expr;
+        }
+        else {
+            throw error(peek(), "Expexted right parentese");
         }
     }
 
@@ -304,4 +310,29 @@ ExpressionPtr Parser::parsePrimary()
         auto id = previous();
         return std::make_unique<IdentifierExpression>(id.lexeme);
     }
+
+    throw error(peek(), "Expexted primary.");
+}
+
+Type Parser::parseType()
+{
+    if (match(TokenType::INT_TYPE))
+        return Type(Type::Kind::Int);
+    
+    if (match(TokenType::FLOAT_TYPE))
+        return Type(Type::Kind::Float);
+
+    if (match(TokenType::BOOL_TYPE))
+        return Type(Type::Kind::Bool);
+
+    if (match(TokenType::CHAR_TYPE))
+        return Type(Type::Kind::Char);
+
+    if (match(TokenType::STRING_TYPE))
+        return Type(Type::Kind::String);
+
+    if (match(TokenType::VOID_TYPE))
+        return Type(Type::Kind::Void);
+
+    throw error(peek(), "Expected type.");
 }

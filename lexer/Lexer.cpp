@@ -94,6 +94,24 @@ Token Lexer::nextToken()
     if(token.type == TokenType::IDENTIFIER) {
         if(reserved_words.count(token.lexeme)) token.type = reserved_words[lexeme];
     }
+    else if(token.type == TokenType::INT_LITERAL) {
+        token.value = std::stoll(token.lexeme);
+    }
+    else if(token.type == TokenType::FLOAT_LITERAL) {
+        token.value = std::stod(token.lexeme);
+    }
+    else if(token.type == TokenType::TRUE_LITERAL) {
+        token.value = true;
+    }
+    else if(token.type == TokenType::FALSE_LITERAL) {
+        token.value = false;
+    }
+    else if(token.type == TokenType::CHAR_LITERAL) {
+        token.value = token.lexeme[1];
+    }
+    else if(token.type == TokenType::STRING_LITERAL) {
+        token.value = token.lexeme.substr(1, token.lexeme.size()-2);
+    }
 
     return token;
 }

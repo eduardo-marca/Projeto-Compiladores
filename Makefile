@@ -10,7 +10,7 @@ HEADER_DIRS := $(shell find . -type f \( -name '*.hpp' -o -name '*.h' \) -exec d
 INCLUDES := $(addprefix -I,$(HEADER_DIRS))
 
 CPPFLAGS += $(INCLUDES) -MMD -MP
-CXXFLAGS ?= -std=c++17 -Wall -Wextra -pedantic -g
+CXXFLAGS ?= -std=c++20 -Wall -Wextra -pedantic -g
 LDFLAGS ?=
 LDLIBS ?=
 

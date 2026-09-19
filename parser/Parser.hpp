@@ -8,6 +8,7 @@
 #include "Expression.hpp"
 #include "ParseError.hpp"
 #include "Program.hpp"
+#include "Type.hpp"
 
 class Parser {
 private:
@@ -67,4 +68,6 @@ private:
     ExpressionPtr parseUnary();
     ExpressionPtr parsePostfix();
     ExpressionPtr parsePrimary();
+
+    Type parseType();
 };

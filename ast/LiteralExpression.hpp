@@ -8,5 +8,5 @@ class LiteralExpression : public Expression {
     Value value;
 
 public:
-    LiteralExpression(Value value) : value(value) {}
+    LiteralExpression(Value value) : value(std::move(value)) {}
 };

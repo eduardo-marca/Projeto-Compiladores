@@ -1,12 +1,14 @@
 #pragma once
 
+#include <variant>
 #include <string>
-#include "Type.hpp"
+#include <cstdint>
 
-class Value {
-public:
-    Type type;
-    std::string val;
-
-    Value(Type type, std::string val) : type(type), val(val) {}
-};
+using Value = std::variant<
+    std::monostate,
+    std::int64_t,
+    double,
+    bool,
+    char,
+    std::string
+>;
