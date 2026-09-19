@@ -9,6 +9,7 @@
 #include "ParseError.hpp"
 #include "Program.hpp"
 #include "Type.hpp"
+#include "ExpressionStatement.hpp"
 
 class Parser {
 private:
@@ -44,12 +45,14 @@ private:
 
     // Grammar rules
     ProgramPtr parseProgram();
+    std::unique_ptr<StatementList> parseStatementList();
 
     StatementPtr parseStatement();
     StatementPtr parseBlock();
     StatementPtr parseIf();
     StatementPtr parseWhile();
     StatementPtr parseFor();
+    StatementPtr parseExpressionStatement();
     StatementPtr parseVariableDeclaration();
     StatementPtr parseFunctionDeclaration();
 

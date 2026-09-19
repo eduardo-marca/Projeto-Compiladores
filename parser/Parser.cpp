@@ -121,7 +121,27 @@ ProgramPtr Parser::parseProgram()
 {
     ProgramPtr program = std::make_unique<Program>();
 
+    program->statements = std::move(parseStatementList());
+
     return program;
+}
+
+std::unique_ptr<StatementList> Parser::parseStatementList()
+{
+    std::unique_ptr<StatementList> statements = std::make_unique<StatementList>();
+
+    while(peek().type != TokenType::END_OF_FILE) {
+        statements->push_back(std::move(parseStatement()));
+    }
+
+    consume(TokenType::END_OF_FILE, "Expected End Of File");
+
+    return statements;
+}
+
+StatementPtr Parser::parseStatement()
+{
+    return parseExpressionStatement();
 }
 
 ExpressionPtr Parser::parseExpression()
@@ -302,7 +322,7 @@ ExpressionPtr Parser::parsePrimary()
             return expr;
         }
         else {
-            throw error(peek(), "Expexted right parentese");
+            throw error(peek(), "Expected right parentese");
         }
     }
 
@@ -311,7 +331,7 @@ ExpressionPtr Parser::parsePrimary()
         return std::make_unique<IdentifierExpression>(id.lexeme);
     }
 
-    throw error(peek(), "Expexted primary.");
+    throw error(peek(), "Expected primary.");
 }
 
 Type Parser::parseType()
@@ -335,4 +355,13 @@ Type Parser::parseType()
         return Type(Type::Kind::Void);
 
     throw error(peek(), "Expected type.");
+}
+
+StatementPtr Parser::parseExpressionStatement()
+{
+    ExpressionPtr expression = parseExpression();
+
+    consume(TokenType::SEMICOLON, "Expected semicolon (;) after expression");
+
+    return std::make_unique<ExpressionStatement>(std::move(expression));
 }
