@@ -1,9 +1,12 @@
 #pragma once
 
+#include <sstream>
+
 #include <vector>
 #include "Token.hpp"
 #include "Statement.hpp"
 #include "Expression.hpp"
+#include "ParseError.hpp"
 
 class Parser {
 private:
@@ -20,19 +23,17 @@ private:
     const Token& peek() const;
     const Token& previous() const;
 
-    bool atEnd() const;
+    bool isAtEnd() const;
 
     const Token& advance();
 
     bool check(TokenType type) const;
     bool checkNext(TokenType type) const;
     
-    bool match(TokenType type) const;
+    bool match(TokenType type);
     bool match(std::initializer_list<TokenType> types);
-    bool match(std::vector<TokenType> types);
 
     const Token& consume(TokenType type, std::string_view message);
-    //const Token& expect(TokenType type);
 
     // tratamento de erros
     ParseError error(const Token& token, std::string_view message);

@@ -13,12 +13,23 @@ const Token &Parser::peek() const
 
 const Token &Parser::previous() const
 {
-    return tokens[current-1];
+    return tokens[current - 1];
 }
 
 bool Parser::check(TokenType type) const
 {
-    return tokens[current].type == type;
+    if (isAtEnd())
+        return type == TokenType::END_OF_FILE;
+
+    return peek().type == type;
+}
+
+bool Parser::checkNext(TokenType type) const
+{
+    if (current + 1 >= tokens.size())
+        return type == TokenType::END_OF_FILE;
+
+    return tokens[current + 1].type == type;
 }
 
 bool Parser::match(TokenType type)
@@ -30,42 +41,75 @@ bool Parser::match(TokenType type)
     return true;
 }
 
-bool Parser::match(std::vector<TokenType> types)
+bool Parser::match(std::initializer_list<TokenType> types)
 {
-    for(TokenType type : types) {
-        if(check(type)) {
+    for (TokenType type : types) {
+        if (check(type)) {
             advance();
             return true;
         }
     }
+
     return false;
 }
 
-const Token &Parser::expect(TokenType type)
+const Token &Parser::consume(TokenType type, std::string_view message)
 {
-    if(check(type))
+    if (check(type))
         return advance();
 
-    throw ParseError("Token of type <" + to_string(type) + "> expected");
+    throw error(peek(), message);
 }
 
 const Token &Parser::advance()
 {
-    current++;
-    return tokens[current-1];
+    if(!isAtEnd())
+        current++;
+
+    return previous();
 }
 
-const Token &Parser::consume(TokenType type)
+bool Parser::isAtEnd() const
 {
-    if(check(type))
-        return advance();
-
-    throw ParseError("Token of type <" + to_string(type) + "> expected");
+    return peek().type == TokenType::END_OF_FILE;
 }
 
-bool Parser::atEnd() const
+ParseError Parser::error(const Token &token, std::string_view message)
 {
-    return current >= tokens.size();
+    std::ostringstream oss;
+
+    oss << "Parse error at "
+    << token.line
+    << ":"
+    << token.column
+    << ": "
+    << message;
+
+    return ParseError(oss.str());
+}
+
+void Parser::synchronize()
+{
+    advance();
+
+    while (!isAtEnd()) {
+        if (previous().type == TokenType::SEMICOLON)
+            return;
+
+        switch (peek().type) {
+        case TokenType::VAR:
+        case TokenType::LET:
+        case TokenType::IF:
+        case TokenType::FOR:
+        case TokenType::WHILE:
+        case TokenType::RETURN:
+        case TokenType::FN:
+            return;
+
+        default:
+            advance();
+        }
+    }
 }
 
 ExpressionPtr Parser::parseExpression()
@@ -234,7 +278,7 @@ ExpressionPtr Parser::parsePrimary()
     )) {
         Token token = previous();
 
-        return std::make_unique<LiteralExpression>(token);
+        //return std::make_unique<LiteralExpression>(token);
     }
 
     if(match(TokenType::LEFT_PAREN)) {
