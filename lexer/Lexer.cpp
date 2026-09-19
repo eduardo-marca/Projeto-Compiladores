@@ -79,8 +79,7 @@ Token Lexer::nextToken()
 
     // se não encontrou nenhum token, lança erro léxico
     if(!lastToken.has_value()) {
-        std::cerr << "Could Not Recognize Token" << std::endl;
-        exit(-1);
+        throw error(line, startColumn, "Não foi possível identificar o Token");
     }
 
     // retorna para posição do último token
@@ -97,4 +96,18 @@ Token Lexer::nextToken()
     }
 
     return token;
+}
+
+LexicalError Lexer::error(const int line, const int column, std::string_view message)
+{
+    std::ostringstream oss;
+
+    oss << "Erro lexical em "
+    << line
+    << ":"
+    << column
+    << ": "
+    << message;
+
+    return LexicalError(oss.str());
 }
