@@ -9,7 +9,8 @@ struct Token {
     int line;
     int column;
 
-    Token(TokenType type, std::string lexeme) : type(type), lexeme(lexeme) {}
+    Token(TokenType type, std::string lexeme, int line, int column)
+        : type(type), lexeme(lexeme), line(line), column(column) {}
 
     // Converte o token para uma string apresentável
     std::string ToString() const;

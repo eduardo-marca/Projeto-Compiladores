@@ -35,14 +35,20 @@ Token Lexer::nextToken()
 {
     // ignora espaços e fim de linha
     while(position < source.size() && std::isspace(source[position])) {
+        column++;
+        if(source[position] == '\n') {
+            column = 1;
+            line++;
+        }
         position++;
     }
 
     // se está no final, retorna EOF
-    if(position == source.size()) return Token(TokenType::END_OF_FILE, "");
+    if(position == source.size()) return Token(TokenType::END_OF_FILE, "", line, column);
 
     // guarda posição inicial
     std::size_t start = position;
+    int startColumn = column;
 
     State state = dfa.getInitialState();
 
@@ -62,6 +68,7 @@ Token Lexer::nextToken()
 
         state = *next;
         position++;
+        column++;
 
         // se é estado final, guarda seu token e posição
         if(dfa.isFinal(state)) {
@@ -82,7 +89,7 @@ Token Lexer::nextToken()
     // acha o lexema do token e cria um token
     std::string lexeme = source.substr(start, position - start);
 
-    Token token = Token(*lastToken, lexeme);
+    Token token = Token(*lastToken, lexeme, line, startColumn);
 
     // se token for do tipo identificador, verifica se é palavra reservada
     if(token.type == TokenType::IDENTIFIER) {
