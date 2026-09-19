@@ -1,5 +1,6 @@
 #include "CharSet.hpp"
 
+// variáveis e funções que só são acessíveis neste arquivo
 namespace {
 
 constexpr std::size_t charCount = 256;
@@ -73,6 +74,7 @@ CharSet &CharSet::removeRange(char first, char last)
     const auto start = indexOf(first);
     const auto end = indexOf(last);
 
+    // se intervalo for inválido, ignora
     if(start > end)
         return *this;
 

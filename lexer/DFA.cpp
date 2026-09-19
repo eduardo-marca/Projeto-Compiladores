@@ -2,6 +2,7 @@
 
 void DFA::addTransition(State from, CharSet symbols, State to)
 {
+    // adiciona transição para cada caractere ASCII contido no CharSet
     for(int i = 0; i < 256; i++) {
         char c = static_cast<char>(i);
         if(symbols.contains(c)) transitions[from][c] = to;
@@ -15,14 +16,17 @@ void DFA::setFinal(State state, TokenType type)
 
 std::optional<State> DFA::transition(State state, Symbol symbol) const
 {
+    // verifica se existe transição no map
     const auto stateIt = transitions.find(state);
     if(stateIt != transitions.end())
     {
         const auto symbolIt = stateIt->second.find(symbol);
         if(symbolIt != stateIt->second.end())
+            // retorna estado da tranição
             return symbolIt->second;
     }
 
+    // se não existir, retorna "null"
     return std::nullopt;
 }
 
@@ -44,7 +48,7 @@ State DFA::getInitialState() const
 
 void DFA::buildLexerDFA()
 {
-    // Minus and arrow
+    // Menos e seta
     addTransition(0, CharSet::single('-'), 3);
     setFinal(3, TokenType::MINUS);
     addTransition(3, CharSet::single('>'), 1);
@@ -54,7 +58,7 @@ void DFA::buildLexerDFA()
     addTransition(3, CharSet::single('-'), 4);
     setFinal(4, TokenType::DECREMENT);
 
-    // Int and float literals
+    // Literais Int e Float
     addTransition(0, CharSets::Digit(), 5);
     addTransition(5, CharSets::Digit(), 5);
     setFinal(5, TokenType::INT_LITERAL);
@@ -63,20 +67,20 @@ void DFA::buildLexerDFA()
     addTransition(7, CharSets::Digit(), 7);
     setFinal(7, TokenType::FLOAT_LITERAL);
 
-    // Char literal
+    // Literal Char
     addTransition(0, CharSet::single('\''), 8);
     addTransition(8, CharSets::StringCharacter(), 9);
     addTransition(9, CharSet::single('\''), 10);
     setFinal(10, TokenType::CHAR_LITERAL);
 
-    // String literal
+    // Literal String
     addTransition(0, CharSet::single('\"'), 11);
     addTransition(11, CharSets::StringCharacter(), 12);
     addTransition(12, CharSets::StringCharacter(), 12);
     addTransition(12, CharSet::single('\"'), 13);
     setFinal(13, TokenType::STRING_LITERAL);
 
-    // Division and comments
+    // Divisão e comentários
     addTransition(0, CharSet::single('/'), 15);
     setFinal(15, TokenType::SLASH);
     addTransition(15, CharSet::single('='), 14);
@@ -92,7 +96,7 @@ void DFA::buildLexerDFA()
     addTransition(18, CharSet::single('/'), 19);
     setFinal(19, TokenType::COMMENT);
 
-    // Addition
+    // Adição
     addTransition(0, CharSet::single('+'), 20);
     setFinal(20, TokenType::PLUS);
     addTransition(20, CharSet::single('+'), 21);
@@ -100,7 +104,7 @@ void DFA::buildLexerDFA()
     addTransition(20, CharSet::single('='), 22);
     setFinal(22, TokenType::PLUS_EQUAL);
 
-    // Relational and arithmetic operators
+    // Operadores relacionais e aritméticos
     // <=
     addTransition(0, CharSet::single('<'), 23);
     setFinal(23, TokenType::LEFT_ANGLE);
@@ -147,12 +151,12 @@ void DFA::buildLexerDFA()
     addTransition(37, CharSet::single('.'), 38);
     setFinal(38, TokenType::RANGE);
 
-    // Identifier
+    // Identificador
     addTransition(0, CharSets::IdentifierStart(), 39);
     addTransition(39, CharSets::IdentifierContinue(), 39);
     setFinal(39, TokenType::IDENTIFIER);
 
-    // Unique tokens
+    // Tokens únicos
     addTransition(0, CharSet::single('('), 40);
     setFinal(40, TokenType::LEFT_PAREN);
 

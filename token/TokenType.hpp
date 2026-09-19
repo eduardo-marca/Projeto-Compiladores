@@ -3,7 +3,7 @@
 #include <string>
 
 enum class TokenType {
-    // Id and keywords
+    // Identificador e palavras reservadas
     IDENTIFIER,
     IF,
     ELSE,
@@ -20,10 +20,10 @@ enum class TokenType {
     AND,
     XOR,
 
-    // Comment
+    // Comentário
     COMMENT,
 
-    // Literals
+    // Literais
     INT_LITERAL,
     FLOAT_LITERAL,
     TRUE_LITERAL, // true
@@ -31,7 +31,7 @@ enum class TokenType {
     CHAR_LITERAL,
     STRING_LITERAL,
 
-    // Types
+    // Tipos
     INT_TYPE, // Int
     FLOAT_TYPE, // Float
     BOOL_TYPE, // Bool
@@ -39,7 +39,7 @@ enum class TokenType {
     STRING_TYPE, // String
     VOID_TYPE, // Void
 
-    // Arithmetic operators
+    // Operadores aritméticos
     PLUS, // +
     MINUS, // - 
     STAR, // *
@@ -55,7 +55,7 @@ enum class TokenType {
     INCREMENT, // ++
     DECREMENT, // --
 
-    // Relational operators
+    // Operadores relacionais
     EQUAL, // ==
     LEFT_ANGLE, // <
     RIGHT_ANGLE, // >
@@ -63,7 +63,7 @@ enum class TokenType {
     RIGHT_ANGLE_EQUAL, // >=
     EXCLAMATION_EQUAL, // !=
     
-    // Unique tokens
+    // Tokens únicos
     ASSIGN, // =
     COMMA, // ,
     RANGE, // ..
@@ -78,6 +78,7 @@ enum class TokenType {
     LEFT_BRACE, // {
     RIGHT_BRACE, // }
 
+    // Fim do arquivo
     END_OF_FILE,
 
     UNKNOWN

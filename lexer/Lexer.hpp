@@ -1,19 +1,22 @@
 #pragma once
 
 #include "DFA.hpp"
-#include "CharClass.hpp"
 #include <unordered_map>
 
 class Lexer {
 public:
     explicit Lexer(const std::string& source);
 
+    // acha o próximo token do código
     Token nextToken();
 
 private:
+    // código fonte
     std::string source;
     std::size_t position = 0;
 
+    // autômato
     DFA dfa;
+
     std::unordered_map<std::string, TokenType> reserved_words;
 };

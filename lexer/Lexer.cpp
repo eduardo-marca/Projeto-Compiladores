@@ -6,6 +6,7 @@ Lexer::Lexer(const std::string& source) : source(source), dfa(0)
 {
     dfa.buildLexerDFA();
 
+    // registra as palavras reservadas da linguagem
     reserved_words["if"] = TokenType::IF;
     reserved_words["else"] = TokenType::ELSE;
     reserved_words["while"] = TokenType::WHILE;
@@ -32,47 +33,58 @@ Lexer::Lexer(const std::string& source) : source(source), dfa(0)
 
 Token Lexer::nextToken()
 {
+    // ignora espaços e fim de linha
     while(position < source.size() && std::isspace(source[position])) {
         position++;
     }
 
+    // se está no final, retorna EOF
     if(position == source.size()) return Token(TokenType::END_OF_FILE, "");
 
+    // guarda posição inicial
     std::size_t start = position;
 
     State state = dfa.getInitialState();
 
+    // guarda último token encontrado e sua posição
     std::size_t lastFinalPosition = start;
     std::optional<TokenType> lastToken = std::nullopt;
 
     while(position < source.size()) {
         char c = source[position];
 
+        // pede próximo estado ao DFA
         auto next = dfa.transition(state, c);
 
+        // se transição não existe, para o loop
         if(!next.has_value())
             break;
 
         state = *next;
         position++;
 
+        // se é estado final, guarda seu token e posição
         if(dfa.isFinal(state)) {
             lastFinalPosition = position;
             lastToken = dfa.tokenType(state);
         }
     }
 
+    // se não encontrou nenhum token, lança erro léxico
     if(!lastToken.has_value()) {
         std::cerr << "Could Not Recognize Token" << std::endl;
         exit(-1);
     }
 
+    // retorna para posição do último token
     position = lastFinalPosition;
 
+    // acha o lexema do token e cria um token
     std::string lexeme = source.substr(start, position - start);
 
     Token token = Token(*lastToken, lexeme);
 
+    // se token for do tipo identificador, verifica se é palavra reservada
     if(token.type == TokenType::IDENTIFIER) {
         if(reserved_words.count(token.lexeme)) token.type = reserved_words[lexeme];
     }

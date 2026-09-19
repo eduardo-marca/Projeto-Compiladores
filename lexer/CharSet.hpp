@@ -4,28 +4,42 @@
 
 class CharSet {
 public:
+    // CharSet com todos os caracteres
     static CharSet any();
+    // CharSet com nenhum caractere
     static CharSet none();
     
+    // CharSet com range incluso
     static CharSet range(char first, char last);
+    // CharSet com um único caractere
     static CharSet single(char c);
 
+    // Verfica se um caractere está contido
     bool contains(char c) const;
 
+    // adiciona um caractere
     CharSet& add(char c);
+    // adiciona um range de caracteres
     CharSet& addRange(char first, char last);
 
+    // remove um caractere
     CharSet& remove(char c);
+    // remove um range de caracteres
     CharSet& removeRange(char first, char last);
 
+    // Faz a união dos CharSet
     CharSet& unite(const CharSet& other);
+    // Faz a interseção dos CharSet
     CharSet& intersect(const CharSet& other);
+    // Faz a diferença dos CharSet
     CharSet& subtract(const CharSet& other);
 
 private:
+    // para cada caractere ASCII, marca se está incluso ou não
     std::array<bool, 256> chars{};
 };
 
+// CharSets predefinidos para uso geral
 namespace CharSets {
 
     inline CharSet Digit() {
