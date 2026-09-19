@@ -8,3 +8,5 @@ class Program : public ASTNode {
 public:
     std::vector<std::unique_ptr<Declaration>> declarations;
 };
+
+using ProgramPtr = std::unique_ptr<Program>;

@@ -6,6 +6,11 @@
 #include "LiteralExpression.hpp"
 #include "IdentifierExpression.hpp"
 
+ProgramPtr Parser::parse()
+{
+    return parseProgram();
+}
+
 const Token &Parser::peek() const
 {
     return tokens[current];
@@ -110,6 +115,13 @@ void Parser::synchronize()
             advance();
         }
     }
+}
+
+ProgramPtr Parser::parseProgram()
+{
+    ProgramPtr program = std::make_unique<Program>();
+
+    return program;
 }
 
 ExpressionPtr Parser::parseExpression()

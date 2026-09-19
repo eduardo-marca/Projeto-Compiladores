@@ -7,6 +7,7 @@
 #include "Statement.hpp"
 #include "Expression.hpp"
 #include "ParseError.hpp"
+#include "Program.hpp"
 
 class Parser {
 private:
@@ -16,7 +17,7 @@ private:
 public:
     explicit Parser(const std::vector<Token>& tokens) : tokens(tokens) {}
 
-    //Program parse();
+    ProgramPtr parse();
 
 private:
     // Navegação de tokens
@@ -41,7 +42,7 @@ private:
     void synchronize();
 
     // Grammar rules
-    //Program parseProgram();
+    ProgramPtr parseProgram();
 
     StatementPtr parseStatement();
     StatementPtr parseBlock();
