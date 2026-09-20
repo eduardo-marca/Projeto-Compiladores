@@ -5,6 +5,7 @@
 #include "AssignmentExpression.hpp"
 #include "LiteralExpression.hpp"
 #include "IdentifierExpression.hpp"
+#include "UnaryExpression.hpp"
 
 ProgramPtr Parser::parse()
 {
@@ -88,7 +89,9 @@ ParseError Parser::error(const Token &token, std::string_view message)
     << ":"
     << token.column
     << ": "
-    << message;
+    << message
+    << ", found "
+    << to_string(token.type);
 
     return ParseError(oss.str());
 }
@@ -252,6 +255,8 @@ ExpressionPtr Parser::parseAdditive()
 
         auto right = parseMultiplicative();
 
+        //std::cout << "Additive: " << left->To_String() << ", " << to_string(op.type)
+        //    << ", " << right->To_String() << std::endl;
         left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
     }
 
@@ -267,6 +272,8 @@ ExpressionPtr Parser::parseMultiplicative()
 
         auto right = parsePower();
 
+        //std::cout << "Multiplicative: " << left->To_String() << ", " << to_string(op.type)
+        //    << ", " << right->To_String() << std::endl;
         left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
     }
 
@@ -290,17 +297,17 @@ ExpressionPtr Parser::parsePower()
 
 ExpressionPtr Parser::parseUnary()
 {
-    auto left = parsePrimary();
-
-    while(match({TokenType::NOT, TokenType::MINUS, TokenType::PLUS})) {
+    if(match({TokenType::NOT, TokenType::MINUS, TokenType::PLUS})) {
         Token op = previous();
 
-        auto right = parsePrimary();
+        auto operand = parseUnary();
 
-        left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
+        //std::cout << "Unary: " << left->To_String() << ", " << to_string(op.type)
+        //    << ", " << right->To_String() << std::endl;
+        return std::make_unique<UnaryExpression>(op.type, std::move(operand));
     }
 
-    return left;
+    return parsePrimary();
 }
 
 ExpressionPtr Parser::parsePrimary()
@@ -331,7 +338,7 @@ ExpressionPtr Parser::parsePrimary()
         return std::make_unique<IdentifierExpression>(id.lexeme);
     }
 
-    throw error(peek(), "Expected primary.");
+    throw error(peek(), "Expected primary");
 }
 
 Type Parser::parseType()
@@ -354,7 +361,7 @@ Type Parser::parseType()
     if (match(TokenType::VOID_TYPE))
         return Type::Void;
 
-    throw error(peek(), "Expected type.");
+    throw error(peek(), "Expected type");
 }
 
 StatementPtr Parser::parseExpressionStatement()

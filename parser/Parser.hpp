@@ -1,8 +1,9 @@
 #pragma once
 
 #include <sstream>
-
 #include <vector>
+#include <iostream>
+
 #include "Token.hpp"
 #include "Statement.hpp"
 #include "Expression.hpp"

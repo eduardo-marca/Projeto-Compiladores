@@ -12,6 +12,6 @@ public:
     ExpressionStatement(ExpressionPtr expression) : expression(std::move(expression)) {}
 
     std::string To_String() const override {
-        return "ExpressionStatement(" + expression->To_String() + ")";
+        return "Expression(" + expression->To_String() + ")";
     }
 };

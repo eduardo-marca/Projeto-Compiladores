@@ -37,7 +37,7 @@ std::vector<Token> Lexer::getTokens()
     Token cur = nextToken();
 
     while(cur.type != TokenType::END_OF_FILE) {
-        tokens.push_back(cur);
+        if(cur.type != TokenType::COMMENT) tokens.push_back(cur);
         cur = nextToken();
     }
     tokens.push_back(cur);
@@ -108,7 +108,7 @@ Token Lexer::nextToken()
     if(token.type == TokenType::IDENTIFIER) {
         if(reserved_words.count(token.lexeme)) token.type = reserved_words[lexeme];
     }
-    else if(token.type == TokenType::INT_LITERAL) {
+    if(token.type == TokenType::INT_LITERAL) {
         token.value.val = std::stoll(token.lexeme);
         token.value.type = Type::Int;
         token.value.lexeme = token.lexeme;
