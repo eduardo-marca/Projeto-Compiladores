@@ -6,8 +6,12 @@
 #include "Lexer.hpp"
 #include "Parser.hpp"
 
-int main() {
-    std::ifstream file("codes/ex6.m");
+int main(int argc, char *argv[]) {
+    std::string source_filename;
+    if(argc == 1) source_filename = "codes/tests.m";
+    else source_filename = argv[1];
+
+    std::ifstream file(source_filename);
 
     if(!file.is_open()) {
         std::cerr << "Failed to open the file." << std::endl;
