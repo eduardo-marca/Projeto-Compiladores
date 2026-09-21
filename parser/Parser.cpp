@@ -7,9 +7,9 @@
 #include "IdentifierExpression.hpp"
 #include "UnaryExpression.hpp"
 #include "BlockStatement.hpp"
+#include "IfStatement.hpp"
 #include "WhileStatement.hpp"
 #include "ForStatement.hpp"
-#include "IfStatement.hpp"
 
 ProgramPtr Parser::parse()
 {
@@ -152,7 +152,7 @@ StatementPtr Parser::parseStatement()
     if(check(TokenType::LEFT_BRACE)) return parseBlock();
     if(check(TokenType::IF)) return parseIf();
     if(check(TokenType::WHILE)) return parseWhile();
-    //if(check(TokenType::FOR)) return parseFor();
+    if(check(TokenType::FOR)) return parseFor();
 
     return parseExpressionStatement();
 }
@@ -196,6 +196,34 @@ StatementPtr Parser::parseWhile()
     return std::make_unique<WhileStatement>(std::move(condition), std::move(body));
 }
 
+StatementPtr Parser::parseFor()
+{
+    consume(TokenType::FOR, "Expected FOR");
+
+    ExpressionPtr initExpression = nullptr;
+    ExpressionPtr condExpression = nullptr;
+    ExpressionPtr incExpression = nullptr;
+    
+    if(!match(TokenType::SEMICOLON)) {
+        initExpression = parseExpression();
+        consume(TokenType::SEMICOLON, "Expected SEMICOLON after for init");
+    }
+
+    if(!match(TokenType::SEMICOLON)) {
+        condExpression = parseExpression();
+        consume(TokenType::SEMICOLON, "Expected SEMICOLON after for cond");
+    }
+    
+    if(!check(TokenType::LEFT_BRACE)) {
+        incExpression = parseExpression();
+    }
+
+    StatementPtr block = parseBlock();
+
+    return std::make_unique<ForStatement>(std::move(initExpression), std::move(condExpression),
+           std::move(incExpression), std::move(block));
+}
+
 StatementPtr Parser::parseExpressionStatement()
 {
     ExpressionPtr expression = parseExpression();
@@ -214,7 +242,7 @@ ExpressionPtr Parser::parseAssignment()
 {
     auto left = parseLogicalOr();
 
-    if(match({TokenType::EQUAL, TokenType::PLUS_EQUAL, TokenType::MINUS_EQUAL, TokenType::STAR_EQUAL,
+    if(match({TokenType::ASSIGN, TokenType::PLUS_EQUAL, TokenType::MINUS_EQUAL, TokenType::STAR_EQUAL,
                 TokenType::SLASH_EQUAL, TokenType::CARET_EQUAL, TokenType::PERCENT_EQUAL}
     )) {
         Token op = previous();

@@ -20,3 +20,7 @@ else {
 while(x > 2) {
     x += 2;
 }
+
+for i = 1; i < N; i += 1 {
+    x += i;
+}
