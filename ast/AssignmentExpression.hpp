@@ -11,4 +11,8 @@ public:
 
     AssignmentExpression(ExpressionPtr left, TokenType op, ExpressionPtr right)
         : left(std::move(left)), op(op), right(std::move(right)) {}
+
+    std::string To_String() const override {
+        return "Assignment(" + left->To_String() + ", " + to_string(op) + ", " + right->To_String() + ")";
+    }
 };

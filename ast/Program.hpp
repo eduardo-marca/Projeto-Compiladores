@@ -3,8 +3,7 @@
 #include <vector>
 
 #include "Declaration.hpp"
-
-using StatementList = std::vector<std::unique_ptr<Statement>>;
+#include "Statement.hpp"
 
 class Program : public ASTNode {
 public:

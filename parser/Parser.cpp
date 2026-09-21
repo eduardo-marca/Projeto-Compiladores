@@ -6,6 +6,10 @@
 #include "LiteralExpression.hpp"
 #include "IdentifierExpression.hpp"
 #include "UnaryExpression.hpp"
+#include "BlockStatement.hpp"
+#include "WhileStatement.hpp"
+#include "ForStatement.hpp"
+#include "IfStatement.hpp"
 
 ProgramPtr Parser::parse()
 {
@@ -134,7 +138,8 @@ std::unique_ptr<StatementList> Parser::parseStatementList()
     std::unique_ptr<StatementList> statements = std::make_unique<StatementList>();
 
     while(peek().type != TokenType::END_OF_FILE) {
-        statements->push_back(std::move(parseStatement()));
+        StatementPtr statement = parseStatement();
+        statements->push_back(std::move(statement));
     }
 
     consume(TokenType::END_OF_FILE, "Expected End Of File");
@@ -144,7 +149,60 @@ std::unique_ptr<StatementList> Parser::parseStatementList()
 
 StatementPtr Parser::parseStatement()
 {
+    if(check(TokenType::LEFT_BRACE)) return parseBlock();
+    if(check(TokenType::IF)) return parseIf();
+    if(check(TokenType::WHILE)) return parseWhile();
+    //if(check(TokenType::FOR)) return parseFor();
+
     return parseExpressionStatement();
+}
+
+StatementPtr Parser::parseBlock()
+{
+    consume(TokenType::LEFT_BRACE, "Expected block LEFT_BRACE");
+
+    StatementListPtr statements = std::make_unique<StatementList>();
+
+    while(!match(TokenType::RIGHT_BRACE)) {
+        StatementPtr statement = parseStatement();
+        statements->push_back(std::move(statement));
+    }
+
+    return std::make_unique<BlockStatement>(std::move(statements));
+}
+
+StatementPtr Parser::parseIf()
+{
+    consume(TokenType::IF, "Expected IF");
+
+    ExpressionPtr condition = parseExpression();
+    StatementPtr thenBranch = parseBlock();
+
+    if(match(TokenType::ELSE)) {
+        StatementPtr elseBranch = parseBlock();
+        return std::make_unique<IfStatement>(std::move(condition), std::move(thenBranch)
+            , std::move(elseBranch));
+    }
+    return std::make_unique<IfStatement>(std::move(condition), std::move(thenBranch));
+}
+
+StatementPtr Parser::parseWhile()
+{
+    consume(TokenType::WHILE, "Expected WHILE");
+
+    ExpressionPtr condition = parseExpression();
+    StatementPtr body = parseBlock();
+
+    return std::make_unique<WhileStatement>(std::move(condition), std::move(body));
+}
+
+StatementPtr Parser::parseExpressionStatement()
+{
+    ExpressionPtr expression = parseExpression();
+
+    consume(TokenType::SEMICOLON, "Expected SEMICOLON after expression");
+
+    return std::make_unique<ExpressionStatement>(std::move(expression));
 }
 
 ExpressionPtr Parser::parseExpression()
@@ -255,8 +313,6 @@ ExpressionPtr Parser::parseAdditive()
 
         auto right = parseMultiplicative();
 
-        //std::cout << "Additive: " << left->To_String() << ", " << to_string(op.type)
-        //    << ", " << right->To_String() << std::endl;
         left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
     }
 
@@ -272,8 +328,6 @@ ExpressionPtr Parser::parseMultiplicative()
 
         auto right = parsePower();
 
-        //std::cout << "Multiplicative: " << left->To_String() << ", " << to_string(op.type)
-        //    << ", " << right->To_String() << std::endl;
         left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
     }
 
@@ -302,8 +356,6 @@ ExpressionPtr Parser::parseUnary()
 
         auto operand = parseUnary();
 
-        //std::cout << "Unary: " << left->To_String() << ", " << to_string(op.type)
-        //    << ", " << right->To_String() << std::endl;
         return std::make_unique<UnaryExpression>(op.type, std::move(operand));
     }
 
@@ -362,13 +414,4 @@ Type Parser::parseType()
         return Type::Void;
 
     throw error(peek(), "Expected type");
-}
-
-StatementPtr Parser::parseExpressionStatement()
-{
-    ExpressionPtr expression = parseExpression();
-
-    consume(TokenType::SEMICOLON, "Expected semicolon (;) after expression");
-
-    return std::make_unique<ExpressionStatement>(std::move(expression));
 }

@@ -9,4 +9,8 @@ class IdentifierExpression : public Expression {
 
 public:
     IdentifierExpression(std::string name) : name(name) {}
+
+    std::string To_String() const override {
+        return name;
+    }
 };

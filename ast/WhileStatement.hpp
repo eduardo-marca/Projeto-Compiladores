@@ -10,4 +10,12 @@ class WhileStatement : public Statement {
 public:
     WhileStatement(ExpressionPtr condition, StatementPtr body)
         : condition(move(condition)), body(move(body)) {}
+
+    std::string To_String() const override {
+        std::ostringstream oss;
+        oss << "While(" << std::endl
+        << body->To_String()
+        << ")";
+        return oss.str();
+    }
 };
