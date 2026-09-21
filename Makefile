@@ -1,6 +1,6 @@
 CXX ?= g++
-TARGET ?= compiler
-DEBUG_TARGET ?= compiler-debug
+TARGET ?= maiden
+DEBUG_TARGET ?= maiden-debug
 BUILD_DIR ?= build
 DEBUG_BUILD_DIR ?= build/debug
 ARGS ?=

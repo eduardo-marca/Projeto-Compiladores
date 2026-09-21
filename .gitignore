@@ -58,5 +58,5 @@
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,c++
 
 build/
-compiler
-compiler-debug
+maiden
+maiden-debug
