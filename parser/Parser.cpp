@@ -10,6 +10,9 @@
 #include "IfStatement.hpp"
 #include "WhileStatement.hpp"
 #include "ForStatement.hpp"
+#include "IteratorForStatement.hpp"
+#include "TradicionalForStatement.hpp"
+#include "ReturnStatement.hpp"
 #include "VariableDeclaration.hpp"
 #include "FunctionDeclaration.hpp"
 
@@ -152,7 +155,7 @@ StatementPtr Parser::parseStatement()
     if(check(TokenType::IF)) return parseIf();
     if(check(TokenType::WHILE)) return parseWhile();
     if(check(TokenType::FOR)) return parseFor();
-    //if(check(TokenType::RETURN)) return parseReturn();
+    if(check(TokenType::RETURN)) return parseReturn();
 
     return parseExpressionStatement();
 }
@@ -201,28 +204,78 @@ StatementPtr Parser::parseFor()
 {
     consume(TokenType::FOR, "Expected FOR");
 
-    ExpressionPtr initExpression = nullptr;
-    ExpressionPtr condExpression = nullptr;
-    ExpressionPtr incExpression = nullptr;
-    
-    if(!match(TokenType::SEMICOLON)) {
-        initExpression = parseExpression();
-        consume(TokenType::SEMICOLON, "Expected SEMICOLON after for init");
+    if (check(TokenType::IDENTIFIER) && checkNext(TokenType::IN)) {
+        return parseIteratorFor();
     }
 
-    if(!match(TokenType::SEMICOLON)) {
-        condExpression = parseExpression();
-        consume(TokenType::SEMICOLON, "Expected SEMICOLON after for cond");
+    return parseTradicionalFor();
+}
+
+StatementPtr Parser::parseIteratorFor()
+{
+    Token variable = consume(TokenType::IDENTIFIER, "Expected iterator variable");
+
+    consume(TokenType::IN, "Expected" + to_string(TokenType::IN) + "iterator");
+
+    auto iterable = parseExpression();
+
+    auto body = parseBlock();
+
+    return std::make_unique<IteratorForStatement>(
+        variable.lexeme,
+        std::move(iterable),
+        std::move(body)
+    );
+}
+
+StatementPtr Parser::parseTradicionalFor()
+{
+    ExpressionPtr initialization = nullptr;
+    ExpressionPtr condition = nullptr;
+    ExpressionPtr increment = nullptr;
+    
+    if(!check(TokenType::SEMICOLON)) {
+        initialization = parseExpression();
     }
+
+    consume(TokenType::SEMICOLON, "Expected SEMICOLON after for init");
+
+    if(!check(TokenType::SEMICOLON)) {
+        condition = parseExpression();
+    }
+
+    consume(TokenType::SEMICOLON, "Expected SEMICOLON after for cond");
     
     if(!check(TokenType::LEFT_BRACE)) {
-        incExpression = parseExpression();
+        increment = parseExpression();
     }
 
-    StatementPtr block = parseBlock();
+    BlockPtr body = parseBlock();
 
-    return std::make_unique<ForStatement>(std::move(initExpression), std::move(condExpression),
-           std::move(incExpression), std::move(block));
+    return std::make_unique<TradicionalForStatement>(
+        std::move(initialization),
+        std::move(condition),
+        std::move(increment),
+        std::move(body)
+    );
+}
+
+StatementPtr Parser::parseReturn()
+{
+    ExpressionPtr value = nullptr;
+
+    consume(TokenType::RETURN, "Exptected RETURN");
+
+    if (!check(TokenType::SEMICOLON)) {
+        value = parseExpression();
+    }
+
+    consume(
+        TokenType::SEMICOLON,
+        "Expected SEMICOLON after return"
+    );
+
+    return std::make_unique<ReturnStatement>(std::move(value));
 }
 
 StatementPtr Parser::parseExpressionStatement()

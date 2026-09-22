@@ -6,8 +6,9 @@
 #include "BinaryExpression.hpp"
 #include "BlockStatement.hpp"
 #include "ExpressionStatement.hpp"
-#include "ForInStatement.hpp"
-#include "ForStatement.hpp"
+#include "IteratorForStatement.hpp"
+#include "TradicionalForStatement.hpp"
+#include "ReturnStatement.hpp"
 #include "FunctionDeclaration.hpp"
 #include "IdentifierExpression.hpp"
 #include "IfStatement.hpp"
@@ -171,18 +172,19 @@ void ASTDotPrinter::visit(const WhileStatement& node)
     if (node.getBody()) createEdge(id, visitNode(*node.getBody()), "body");
 }
 
-void ASTDotPrinter::visit(const ForStatement& node)
-{
-    const NodeId id = createNode(node, "For", statementColor);
-    if (node.getInitializer()) createEdge(id, visitNode(*node.getInitializer()), "initializer");
-    if (node.getCondition()) createEdge(id, visitNode(*node.getCondition()), "condition");
-    if (node.getIncrement()) createEdge(id, visitNode(*node.getIncrement()), "increment");
-    if (node.getBody()) createEdge(id, visitNode(*node.getBody()), "body");
-}
-
-void ASTDotPrinter::visit(const ForInStatement& node)
+void ASTDotPrinter::visit(const IteratorForStatement& node)
 {
     createNode(node, "For-in", statementColor);
+}
+
+void ASTDotPrinter::visit(const TradicionalForStatement& node)
+{
+    createNode(node, "For", statementColor);
+}
+
+void ASTDotPrinter::visit(const ReturnStatement& node)
+{
+    createNode(node, "Return", statementColor);
 }
 
 void ASTDotPrinter::visit(const FunctionDeclaration& node)
@@ -195,9 +197,6 @@ void ASTDotPrinter::visit(const FunctionDeclaration& node)
 void ASTDotPrinter::visit(const Program& node)
 {
     const NodeId id = createNode(node, "Program", rootColor);
-    //for (const auto& declaration : node.declarations) {
-    //    if (declaration) createEdge(id, visitNode(*declaration), "declaration");
-    //}
     for (const auto& statement : node.items) {
         if (statement) createEdge(id, visitNode(*statement), "item");
     }

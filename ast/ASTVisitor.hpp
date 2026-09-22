@@ -7,12 +7,13 @@ class LiteralExpression;
 class IdentifierExpression;
 class ExpressionStatement;
 class VariableDeclaration;
+class FunctionDeclaration;
 class BlockStatement;
 class IfStatement;
 class WhileStatement;
-class ForStatement;
-class ForInStatement;
-class FunctionDeclaration;
+class IteratorForStatement;
+class TradicionalForStatement;
+class ReturnStatement;
 class Program;
 
 class ASTVisitor {
@@ -32,8 +33,9 @@ public:
     virtual void visit(const BlockStatement&) = 0;
     virtual void visit(const IfStatement&) = 0;
     virtual void visit(const WhileStatement&) = 0;
-    virtual void visit(const ForStatement&) = 0;
-    virtual void visit(const ForInStatement&) = 0;
+    virtual void visit(const IteratorForStatement&) = 0;
+    virtual void visit(const TradicionalForStatement&) = 0;
+    virtual void visit(const ReturnStatement&) = 0;
 
     // Declarations
     virtual void visit(const FunctionDeclaration&) = 0;

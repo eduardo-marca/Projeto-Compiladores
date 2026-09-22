@@ -41,8 +41,9 @@ private:
     void visit(const BlockStatement& node) override;
     void visit(const IfStatement& node) override;
     void visit(const WhileStatement& node) override;
-    void visit(const ForStatement& node) override;
-    void visit(const ForInStatement& node) override;
+    void visit(const IteratorForStatement& node) override;
+    void visit(const TradicionalForStatement& node) override;
+    void visit(const ReturnStatement& node) override;
 
     // Declarations and root
     void visit(const FunctionDeclaration& node) override;

@@ -57,15 +57,17 @@ private:
     DeclarationPtr parseDeclaration();
     DeclarationPtr parseVariableDeclaration();
     DeclarationPtr parseFunctionDeclaration();
-    BlockPtr parseBlock();
-
+    
     // instruções
     StatementPtr parseStatement();
+    StatementPtr parseExpressionStatement();
     StatementPtr parseIf();
     StatementPtr parseWhile();
     StatementPtr parseFor();
-    StatementPtr parseExpressionStatement();
+    StatementPtr parseIteratorFor();
+    StatementPtr parseTradicionalFor();
     StatementPtr parseReturn();
+    BlockPtr parseBlock();
 
     // expressões
     ExpressionPtr parseExpression();
