@@ -3,17 +3,19 @@
 #include <sstream>
 #include <string>
 #include <filesystem>
+#include <cstdlib>
 
 #include "Lexer.hpp"
 #include "Parser.hpp"
+#include "ASTDotPrinter.hpp"
 
 const std::filesystem::path standard_input_file = "codes/tests.mdn";
-const std::filesystem::path standard_ouput_file = "out";
+const std::filesystem::path standard_output_file = "output/ast.dot";
 
 struct Arguments {
     std::filesystem::path input_file;
 
-    bool ast = true;
+    bool ast = false;
     bool ast_svg = false;
     bool ast_png = false;
     bool tokens = false;
@@ -30,13 +32,13 @@ void print_help() {
         "    maiden [options] <input>\n"
         "\n"
         "Options:\n"
-        "    -h, --help        Show this help message\n"
-        "    -t, --tokens      Print lexical tokens\n"
-        "    -a, --ast         Print AST\n"
-        "    --ast-svg        Generate AST as SVG\n"
-        "    --ast-png        Generate AST as PNG\n"
-        "    --verbose        Enable verbose output\n"
-        "    -o, --output <file>        Specify output file\n";
+        "    -h, --help             Show this help message\n"
+        "    -t, --tokens           Print lexical tokens\n"
+        "    -a, --ast              Print the AST and write its DOT graph\n"
+        "    --ast-svg              Write the AST DOT graph (for SVG rendering)\n"
+        "    --ast-png              Write the AST DOT graph (for PNG rendering)\n"
+        "    --verbose              Enable verbose output\n"
+        "    -o, --output <file>    Specify output file\n";
 }
 
 bool parse_arguments (int argc, char* argv[], Arguments& args) {
@@ -51,7 +53,7 @@ bool parse_arguments (int argc, char* argv[], Arguments& args) {
         if (arg == "-t" || arg == "--tokens") {
             args.tokens = true;
         }
-        else if (arg == "-a" || "--ast") {
+        else if (arg == "-a" || arg == "--ast") {
             args.ast = true;
         }
         else if (arg == "--ast-svg") {
@@ -92,8 +94,8 @@ bool parse_arguments (int argc, char* argv[], Arguments& args) {
 
     if (args.output.empty()) {
 
-        std::cout << "no input output specified, using standard: " << standard_ouput_file << std::endl;
-        args.output = standard_ouput_file;
+        std::cout << "no output file specified, using standard: " << standard_output_file << std::endl;
+        args.output = standard_output_file;
     }
 
     return true;
@@ -133,5 +135,28 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    ASTDotPrinter printer;
+
+    if (args.ast || args.ast_svg || args.ast_png) {
+        std::ofstream file(args.output);
+        if (!file.is_open()) {
+            std::cerr << "Failed to open AST output file: " << args.output << std::endl;
+            return 1;
+        }
+        printer.print(*program, file);
+    }
+
+    if(args.ast_svg) {
+        std::system(
+            "dot -Tsvg output/ast.dot -o output/ast.svg"
+        );
+    }
+
+    if(args.ast_png) {
+        std::system(
+            "dot -Tsvg output/ast.dot -o output/ast.png"
+        );
+    }
+    
     return 0;
 }

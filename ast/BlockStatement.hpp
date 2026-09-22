@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Statement.hpp"
+#include "ASTVisitor.hpp"
 
 #include <vector>
 #include <sstream>
@@ -10,6 +11,10 @@ public:
     StatementListPtr statements;
 
     BlockStatement(StatementListPtr statements) : statements(std::move(statements)) {}
+
+    void accept(ASTVisitor& visitor) const override {
+        visitor.visit(*this);
+    }
 
     std::string To_String() const override {
         std::ostringstream oss;

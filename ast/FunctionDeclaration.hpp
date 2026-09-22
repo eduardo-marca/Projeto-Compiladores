@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Declaration.hpp"
+#include "ASTVisitor.hpp"
 #include "Type.hpp"
 #include "BlockStatement.hpp"
 #include "Parameter.hpp"
@@ -17,4 +18,8 @@ public:
     Type returnType;
 
     std::unique_ptr<BlockStatement> body;
+
+    void accept(ASTVisitor& visitor) const override {
+        visitor.visit(*this);
+    }
 };
