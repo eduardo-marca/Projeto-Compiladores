@@ -6,7 +6,8 @@ enum class Type {
     Float,
     Bool,
     Char,
-    String
+    String,
+    Undefined
 };
 
 inline std::string to_string(Type type) {

@@ -151,8 +151,7 @@ void ASTDotPrinter::visit(const VariableDeclaration& node)
 void ASTDotPrinter::visit(const BlockStatement& node)
 {
     const NodeId id = createNode(node, "Block", statementColor);
-    if (!node.statements) return;
-    for (const auto& statement : *node.statements) {
+    for (const auto& statement : node.items) {
         if (statement) createEdge(id, visitNode(*statement), "statement");
     }
 }
@@ -196,11 +195,10 @@ void ASTDotPrinter::visit(const FunctionDeclaration& node)
 void ASTDotPrinter::visit(const Program& node)
 {
     const NodeId id = createNode(node, "Program", rootColor);
-    for (const auto& declaration : node.declarations) {
-        if (declaration) createEdge(id, visitNode(*declaration), "declaration");
-    }
-    if (!node.statements) return;
-    for (const auto& statement : *node.statements) {
-        if (statement) createEdge(id, visitNode(*statement), "statement");
+    //for (const auto& declaration : node.declarations) {
+    //    if (declaration) createEdge(id, visitNode(*declaration), "declaration");
+    //}
+    for (const auto& statement : node.items) {
+        if (statement) createEdge(id, visitNode(*statement), "item");
     }
 }

@@ -3,6 +3,7 @@ TARGET ?= maiden
 DEBUG_TARGET ?= maiden-debug
 BUILD_DIR ?= build
 DEBUG_BUILD_DIR ?= build/debug
+OUTPUT_DIR ?= output
 ARGS ?=
 
 SRCS := $(shell find . -type f -name '*.cpp' -not -path './$(BUILD_DIR)/*')
@@ -56,7 +57,7 @@ gdb: $(DEBUG_TARGET)
 	gdb --args ./$(DEBUG_TARGET) $(ARGS)
 
 clean:
-	rm -rf $(BUILD_DIR) $(DEBUG_BUILD_DIR) $(TARGET) $(DEBUG_TARGET)
+	rm -rf $(BUILD_DIR) $(DEBUG_BUILD_DIR) $(OUTPUT_DIR) $(TARGET) $(DEBUG_TARGET)
 
 print-vars:
 	@echo "SRCS=$(SRCS)"

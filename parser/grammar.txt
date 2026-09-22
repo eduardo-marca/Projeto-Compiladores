@@ -1,31 +1,25 @@
-program ::= statement_list EOF
+program ::= blockItem* EOF ;
 
-statement_list ::= empty | statement_list statement
+declaration ::= variableDeclaration
+              | functionDeclaration ;
 
-statement ::= variableDeclaration
-            | functionDeclaration
-            | expressionStatement
+statement ::= expressionStatement
             | ifStatement
             | whileStatement
             | forStatement
             | returnStatement
             | block
 
-block ::= "{" statement_list "}"
+block ::= "{" blockItem* "}"
 
-variableDeclaration ::= variableMutability optionalVariableType optionalVariableInitialization ";"
+blockItem ::= declaration
+            | statement ;
 
-variableMutability ::= "let" | "var"
-
-optionalVariableType ::= empty | ":" type
-
-optionalVariableInitialization ::= empty | "=" expression
+variableDeclaration ::= ("let" | "var") identifier (":" type)? ("=" expression)? ";"
 
 functionDeclaration ::= "fn" identifier "(" parameterList ")" "->" type block ;
 
-parameterList ::= empty | parameter parameterListTail ;
-
-parameterListTail ::= empty | "," parameter parameterListTail
+parameterList ::= empty | parameter ("," parameter)* ;
 
 parameter ::= identifier ":" type ;
 

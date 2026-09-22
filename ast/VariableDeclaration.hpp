@@ -7,14 +7,20 @@
 
 #include <string>
 
-class VariableDeclaration : public Statement {
+enum class Mutability {
+    Let,
+    Var
+};
+
+class VariableDeclaration : public Declaration {
+    Mutability mutability;
     Type type;
     std::string name;
     ExpressionPtr initializer;
 
 public:
-    VariableDeclaration(Type type, std::string name, ExpressionPtr initializer)
-        : type(type), name(name), initializer(move(initializer)) {}
+    VariableDeclaration(Mutability mutability, Type type, std::string name, ExpressionPtr initializer)
+        : mutability(mutability), type(type), name(name), initializer(move(initializer)) {}
 
     void accept(ASTVisitor& visitor) const override {
         visitor.visit(*this);

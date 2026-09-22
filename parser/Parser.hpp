@@ -9,8 +9,12 @@
 #include "Expression.hpp"
 #include "ParseError.hpp"
 #include "Program.hpp"
-#include "Type.hpp"
 #include "ExpressionStatement.hpp"
+#include "Declaration.hpp"
+#include "BlockStatement.hpp"
+
+#include "Type.hpp"
+#include "Parameter.hpp"
 
 class Parser {
 private:
@@ -46,17 +50,24 @@ private:
 
     // Grammar rules
     ProgramPtr parseProgram();
-    std::unique_ptr<StatementList> parseStatementList();
+    BlockItemPtr parseBlockItem();
+    //std::unique_ptr<StatementList> parseStatementList();
 
+    // declarações
+    DeclarationPtr parseDeclaration();
+    DeclarationPtr parseVariableDeclaration();
+    DeclarationPtr parseFunctionDeclaration();
+    BlockPtr parseBlock();
+
+    // instruções
     StatementPtr parseStatement();
-    StatementPtr parseBlock();
     StatementPtr parseIf();
     StatementPtr parseWhile();
     StatementPtr parseFor();
     StatementPtr parseExpressionStatement();
-    StatementPtr parseVariableDeclaration();
-    StatementPtr parseFunctionDeclaration();
+    StatementPtr parseReturn();
 
+    // expressões
     ExpressionPtr parseExpression();
     ExpressionPtr parseAssignment();
     ExpressionPtr parseLogicalOr();
@@ -73,5 +84,8 @@ private:
     ExpressionPtr parsePostfix();
     ExpressionPtr parsePrimary();
 
+    // auxiliares
     Type parseType();
+    std::vector<Parameter> parseParameterList();
+    Parameter parseParameter();
 };

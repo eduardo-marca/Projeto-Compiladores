@@ -10,6 +10,8 @@
 #include "IfStatement.hpp"
 #include "WhileStatement.hpp"
 #include "ForStatement.hpp"
+#include "VariableDeclaration.hpp"
+#include "FunctionDeclaration.hpp"
 
 ProgramPtr Parser::parse()
 {
@@ -128,23 +130,20 @@ ProgramPtr Parser::parseProgram()
 {
     ProgramPtr program = std::make_unique<Program>();
 
-    program->statements = std::move(parseStatementList());
+    while(!isAtEnd()) {
+        program->add(parseBlockItem());
+    }
 
     return program;
 }
 
-std::unique_ptr<StatementList> Parser::parseStatementList()
+BlockItemPtr Parser::parseBlockItem()
 {
-    std::unique_ptr<StatementList> statements = std::make_unique<StatementList>();
-
-    while(peek().type != TokenType::END_OF_FILE) {
-        StatementPtr statement = parseStatement();
-        statements->push_back(std::move(statement));
+    if(check(TokenType::LET) || check(TokenType::VAR) || check(TokenType::FN)) {
+        return parseDeclaration();
     }
 
-    consume(TokenType::END_OF_FILE, "Expected End Of File");
-
-    return statements;
+    return parseStatement();
 }
 
 StatementPtr Parser::parseStatement()
@@ -153,22 +152,24 @@ StatementPtr Parser::parseStatement()
     if(check(TokenType::IF)) return parseIf();
     if(check(TokenType::WHILE)) return parseWhile();
     if(check(TokenType::FOR)) return parseFor();
+    //if(check(TokenType::RETURN)) return parseReturn();
 
     return parseExpressionStatement();
 }
 
-StatementPtr Parser::parseBlock()
+BlockPtr Parser::parseBlock()
 {
-    consume(TokenType::LEFT_BRACE, "Expected block LEFT_BRACE");
+    consume(TokenType::LEFT_BRACE, "Expected " + to_string(TokenType::LEFT_BRACE));
 
-    StatementListPtr statements = std::make_unique<StatementList>();
+    auto block = std::make_unique<BlockStatement>();
 
-    while(!match(TokenType::RIGHT_BRACE)) {
-        StatementPtr statement = parseStatement();
-        statements->push_back(std::move(statement));
+    while(!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        block->add(parseBlockItem());
     }
 
-    return std::make_unique<BlockStatement>(std::move(statements));
+    consume(TokenType::RIGHT_BRACE, "Expected " + to_string(TokenType::RIGHT_BRACE));
+
+    return block;
 }
 
 StatementPtr Parser::parseIf()
@@ -231,6 +232,58 @@ StatementPtr Parser::parseExpressionStatement()
     consume(TokenType::SEMICOLON, "Expected SEMICOLON after expression");
 
     return std::make_unique<ExpressionStatement>(std::move(expression));
+}
+
+DeclarationPtr Parser::parseDeclaration()
+{
+    if(check(TokenType::FN)) return parseFunctionDeclaration();
+    return parseVariableDeclaration();
+}
+
+DeclarationPtr Parser::parseVariableDeclaration()
+{
+    Mutability mutability;
+
+    if (match(TokenType::LET)) mutability = Mutability::Let;
+    else if (match(TokenType::VAR)) mutability = Mutability::Var;
+    else throw error (peek(), "Expected variable mutability");
+
+    Type type = Type::Undefined;
+    if (match(TokenType::COLON)) {
+        type = parseType();
+    }
+
+    Token id = consume(TokenType::IDENTIFIER, "Expected IDENTIFIER in variable declaration");
+
+    ExpressionPtr initializationExpression = nullptr;
+    if(match(TokenType::ASSIGN)) {
+        initializationExpression = parseExpression();
+    }
+
+    consume(TokenType::SEMICOLON, "Expected SEMICOLON after variable declaration");
+
+    return std::make_unique<VariableDeclaration>(mutability, type, id.lexeme, std::move(initializationExpression));
+}
+
+DeclarationPtr Parser::parseFunctionDeclaration()
+{
+    consume(TokenType::FN, "Expected FN for function declaration");
+
+    Token id = consume(TokenType::IDENTIFIER, "Expected " + to_string(TokenType::IDENTIFIER) + " for function declaration");
+
+    consume(TokenType::LEFT_PAREN, "Expected " + to_string(TokenType::LEFT_PAREN) + " before parameter list");
+
+    std::vector<Parameter> parameters = parseParameterList();
+
+    consume(TokenType::RIGHT_PAREN, "Expected " + to_string(TokenType::RIGHT_PAREN) + " after parameter list");
+
+    consume(TokenType::ARROW, "Expected " + to_string(TokenType::ARROW) + " after function declaration");
+
+    Type returnType = parseType();
+
+    BlockPtr body = parseBlock();
+
+    return std::make_unique<FunctionDeclaration>(id.lexeme, parameters, returnType, std::move(body));
 }
 
 ExpressionPtr Parser::parseExpression()
@@ -442,4 +495,30 @@ Type Parser::parseType()
         return Type::Void;
 
     throw error(peek(), "Expected type");
+}
+
+std::vector<Parameter> Parser::parseParameterList()
+{
+    std::vector<Parameter> parameters;
+
+    if(check(TokenType::IDENTIFIER)) {
+        parameters.push_back(parseParameter());
+
+        while(match(TokenType::COMMA)) {
+            parameters.push_back(parseParameter());
+        }
+    }
+
+    return parameters;
+}
+
+Parameter Parser::parseParameter()
+{
+    Token id = consume(TokenType::IDENTIFIER, "Expected " + to_string(TokenType::IDENTIFIER) + "for parameter");
+
+    consume(TokenType::COLON, "Expected " + to_string(TokenType::COLON) + "for parameter");
+
+    Type type = parseType();
+
+    return Parameter(id.lexeme, type);
 }

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "AST.hpp"
+#include "BlockItem.hpp"
 
 #include <vector>
 
-class Statement : public ASTNode {
+class Statement : public BlockItem {
 public:
     virtual ~Statement() = default;
 };

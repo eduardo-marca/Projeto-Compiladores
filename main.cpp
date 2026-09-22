@@ -130,14 +130,14 @@ int main(int argc, char *argv[]) {
     auto program = parser.parse();
 
     if (args.ast) {
-        for(auto& statement : *(program->statements)) {
+        for(auto& statement : program->items) {
             std::cout << statement->To_String() << std::endl;
         }
     }
 
     ASTDotPrinter printer;
 
-    if (args.ast || args.ast_svg || args.ast_png) {
+    if (args.ast_svg || args.ast_png) {
         std::ofstream file(args.output);
         if (!file.is_open()) {
             std::cerr << "Failed to open AST output file: " << args.output << std::endl;

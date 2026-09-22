@@ -1,8 +1,10 @@
 #pragma once
 
-#include "AST.hpp"
+#include "BlockItem.hpp"
 
-class Declaration : public ASTNode {
+class Declaration : public BlockItem {
 public:
     virtual ~Declaration() = default;
 };
+
+using DeclarationPtr = std::unique_ptr<Declaration>;
