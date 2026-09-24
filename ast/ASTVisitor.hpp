@@ -1,10 +1,17 @@
 #pragma once
 
+class Program;
+
 class BinaryExpression;
+class CallExpression;
+class CastExpression;
+class IndexExpression;
+class RangeExpression;
 class UnaryExpression;
 class AssignmentExpression;
 class LiteralExpression;
 class IdentifierExpression;
+
 class ExpressionStatement;
 class VariableDeclaration;
 class FunctionDeclaration;
@@ -14,7 +21,6 @@ class WhileStatement;
 class IteratorForStatement;
 class TradicionalForStatement;
 class ReturnStatement;
-class Program;
 
 class ASTVisitor {
 public:
@@ -22,6 +28,10 @@ public:
 
     // Expressions
     virtual void visit(const BinaryExpression&) = 0;
+    virtual void visit(const CallExpression&) = 0;
+    virtual void visit(const CastExpression&) = 0;
+    virtual void visit(const IndexExpression&) = 0;
+    virtual void visit(const RangeExpression&) = 0; 
     virtual void visit(const UnaryExpression&) = 0;
     virtual void visit(const AssignmentExpression&) = 0;
     virtual void visit(const LiteralExpression&) = 0;

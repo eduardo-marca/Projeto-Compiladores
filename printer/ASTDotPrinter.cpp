@@ -4,6 +4,10 @@
 
 #include "AssignmentExpression.hpp"
 #include "BinaryExpression.hpp"
+#include "CallExpression.hpp"
+#include "CastExpression.hpp"
+#include "IndexExpression.hpp"
+#include "RangeExpression.hpp"
 #include "BlockStatement.hpp"
 #include "ExpressionStatement.hpp"
 #include "IteratorForStatement.hpp"
@@ -110,6 +114,26 @@ void ASTDotPrinter::visit(const BinaryExpression& node)
     const NodeId id = createNode(node, "Binary expression\n" + to_string(node.op), expressionColor);
     if (node.left) createEdge(id, visitNode(*node.left), "left");
     if (node.right) createEdge(id, visitNode(*node.right), "right");
+}
+
+void ASTDotPrinter::visit(const CallExpression &node)
+{
+    createNode(node, "Call", expressionColor);
+}
+
+void ASTDotPrinter::visit(const CastExpression &node)
+{
+    createNode(node, "Cast", expressionColor);
+}
+
+void ASTDotPrinter::visit(const IndexExpression &node)
+{
+    createNode(node, "Index", expressionColor);
+}
+
+void ASTDotPrinter::visit(const RangeExpression &node)
+{
+    createNode(node, "Range", expressionColor);
 }
 
 void ASTDotPrinter::visit(const UnaryExpression& node)

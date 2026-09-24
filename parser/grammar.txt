@@ -83,7 +83,17 @@ power ::= cast | cast "^" power
 
 cast ::= unary ("as" type)* ;
 
-unary ::= primary | ("not" | "-" | "+") unary
+unary ::= ("not" | "+" | "-") unary
+        | postfix ;
+
+postfix
+    ::= primary postfixOperation* ;
+
+postfixOperation
+    ::= "++"
+      | "--"
+      | "[" expression "]"
+      | "(" argumentList? ")" ;
 
 primary ::= int_literal
           | float_literal

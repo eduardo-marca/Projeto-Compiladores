@@ -2,6 +2,7 @@
 #include "ParseError.hpp"
 
 #include "BinaryExpression.hpp"
+#include "RangeExpression.hpp"
 #include "AssignmentExpression.hpp"
 #include "LiteralExpression.hpp"
 #include "IdentifierExpression.hpp"
@@ -15,6 +16,10 @@
 #include "ReturnStatement.hpp"
 #include "VariableDeclaration.hpp"
 #include "FunctionDeclaration.hpp"
+#include "CastExpression.hpp"
+#include "RangeExpression.hpp"
+#include "IndexExpression.hpp"
+#include "CallExpression.hpp"
 
 ProgramPtr Parser::parse()
 {
@@ -423,16 +428,31 @@ ExpressionPtr Parser::parseEquality()
 
 ExpressionPtr Parser::parseComparison()
 {
-    auto left = parseAdditive();
+    auto left = parseRange();
 
     while(match({TokenType::LEFT_ANGLE, TokenType::LEFT_ANGLE_EQUAL,
             TokenType::RIGHT_ANGLE, TokenType::RIGHT_ANGLE_EQUAL}
     )) {
         Token op = previous();
 
-        auto right = parseAdditive();
+        auto right = parseRange();
 
         left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
+    }
+
+    return left;
+}
+
+ExpressionPtr Parser::parseRange()
+{
+    auto left = parseAdditive();
+
+    if (match(TokenType::RANGE)) {
+        Token op = previous();
+
+        auto right = parseAdditive();
+
+        return std::make_unique<RangeExpression>(std::move(left), std::move(right));
     }
 
     return left;
@@ -470,12 +490,12 @@ ExpressionPtr Parser::parseMultiplicative()
 
 ExpressionPtr Parser::parsePower()
 {
-    auto left = parseUnary();
+    auto left = parseCast();
 
     while(match(TokenType::CARET)) {
         Token op = previous();
 
-        auto right = parseUnary();
+        auto right = parseCast();
 
         left = std::make_unique<BinaryExpression>(std::move(left), op.type, std::move(right));
     }
@@ -483,9 +503,24 @@ ExpressionPtr Parser::parsePower()
     return left;
 }
 
+ExpressionPtr Parser::parseCast()
+{
+    auto expression = parseUnary();
+
+    while (match(TokenType::AS)) {
+        Type type = parseType();
+
+        expression = std::make_unique<CastExpression>(std::move(expression), type);
+    }
+
+    return expression;
+}
+
 ExpressionPtr Parser::parseUnary()
 {
-    if(match({TokenType::NOT, TokenType::MINUS, TokenType::PLUS})) {
+    if(match({TokenType::NOT, TokenType::MINUS, TokenType::PLUS,
+        TokenType::INCREMENT, TokenType::DECREMENT
+    })) {
         Token op = previous();
 
         auto operand = parseUnary();
@@ -493,7 +528,65 @@ ExpressionPtr Parser::parseUnary()
         return std::make_unique<UnaryExpression>(op.type, std::move(operand));
     }
 
-    return parsePrimary();
+    return parsePostfix();
+}
+
+ExpressionPtr Parser::parsePostfix()
+{
+    auto expression = parsePrimary();
+
+    while (true) {
+        if (match({TokenType::INCREMENT, TokenType::DECREMENT})) {
+            expression = std::make_unique<UnaryExpression>(
+                previous().type,
+                std::move(expression),
+                true
+            );
+        }
+        else if(match(TokenType::LEFT_BRACKET)) {
+            auto index = parseExpression();
+
+            consume(
+                TokenType::RIGHT_BRACKET,
+                "Expected RIGHT_BRACKET after array index"
+            );
+
+            expression = std::make_unique<IndexExpression>(
+                std::move(expression),
+                std::move(index)
+            );
+        }
+        else if (match(TokenType::LEFT_PAREN)) {
+            expression = finishCall(std::move(expression));
+        }
+        else {
+            break;
+        }
+    }
+
+    return expression;
+}
+
+ExpressionPtr Parser::finishCall(ExpressionPtr callee)
+{
+    std::vector<ExpressionPtr> arguments;
+
+    if (!check(TokenType::RIGHT_PAREN)) {
+        do {
+            arguments.push_back(parseExpression());
+        }
+        while (match(TokenType::COMMA));
+    }
+
+    consume(
+        TokenType::RIGHT_PAREN,
+        "Expected RIGHT_PAREN after arguments"
+    );
+
+    return std::make_unique<CallExpression>(
+        std::move(callee),
+        std::move(arguments)
+    );
 }
 
 ExpressionPtr Parser::parsePrimary()
@@ -509,23 +602,46 @@ ExpressionPtr Parser::parsePrimary()
         return std::make_unique<LiteralExpression>(previous().value);
     }
 
-    if (match(TokenType::LEFT_PAREN)) {
-        auto expr = parseExpression();
-        if(match(TokenType::RIGHT_PAREN)) {
-            return expr;
-        }
-        else {
-            throw error(peek(), "Expected right parentese");
-        }
-    }
-
     if(match(TokenType::IDENTIFIER)) {
         auto id = previous();
         return std::make_unique<IdentifierExpression>(id.lexeme);
     }
 
+    if (match(TokenType::LEFT_PAREN)) {
+        auto expr = parseExpression();
+
+        consume(TokenType::RIGHT_PAREN, "Expected right parentese");
+        
+        return expr;
+    }
+
+    if (match(TokenType::LEFT_BRACKET)) {
+        //return parseArrayLiteral();
+    }
+
     throw error(peek(), "Expected primary");
 }
+
+// ExpressionPtr Parser::parseArrayLiteral()
+// {
+//     std::vector<ExpressionPtr> elements;
+// 
+//     if (!check(TokenType::RIGHT_BRACKET)) {
+//         do {
+//             elements.push_back(parseExpression());
+//         }
+//         while (match(TokenType::COMMA));
+//     }
+// 
+//     consume(
+//         TokenType::RIGHT_BRACKET,
+//         "Expected RIGHT_BRACKET after array literal"
+//     );
+// 
+//     return std::make_unique<ArrayLiteral>(
+//         std::move(elements)
+//     );
+// }
 
 Type Parser::parseType()
 {

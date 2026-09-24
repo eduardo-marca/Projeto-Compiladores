@@ -84,7 +84,9 @@ private:
     ExpressionPtr parseCast();
     ExpressionPtr parseUnary();
     ExpressionPtr parsePostfix();
+    ExpressionPtr finishCall(ExpressionPtr callee);
     ExpressionPtr parsePrimary();
+    ExpressionPtr parseArrayLiteral();
 
     // auxiliares
     Type parseType();

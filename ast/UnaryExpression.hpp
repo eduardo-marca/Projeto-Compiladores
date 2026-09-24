@@ -8,8 +8,10 @@ class UnaryExpression : public Expression {
 public:
     TokenType op;
     ExpressionPtr operand;
+    bool postfix;
 
-    UnaryExpression(TokenType op, ExpressionPtr operand) : op(op), operand(move(operand)) {}
+    UnaryExpression(TokenType op, ExpressionPtr operand, bool postfix = false)
+        : op(op), operand(move(operand)), postfix(postfix) {}
 
     void accept(ASTVisitor& visitor) const override {
         visitor.visit(*this);

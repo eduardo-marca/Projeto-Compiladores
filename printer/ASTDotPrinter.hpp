@@ -30,6 +30,10 @@ private:
 
     // Expressions
     void visit(const BinaryExpression& node) override;
+    void visit(const CallExpression& node) override;
+    void visit(const CastExpression& node) override;
+    void visit(const IndexExpression& node) override;
+    void visit(const RangeExpression& node) override;
     void visit(const UnaryExpression& node) override;
     void visit(const AssignmentExpression& node) override;
     void visit(const LiteralExpression& node) override;
