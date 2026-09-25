@@ -4,20 +4,20 @@
 
 #include "AssignmentExpression.hpp"
 #include "BinaryExpression.hpp"
+#include "BlockStatement.hpp"
 #include "CallExpression.hpp"
 #include "CastExpression.hpp"
-#include "IndexExpression.hpp"
-#include "RangeExpression.hpp"
-#include "BlockStatement.hpp"
 #include "ExpressionStatement.hpp"
-#include "IteratorForStatement.hpp"
-#include "TradicionalForStatement.hpp"
-#include "ReturnStatement.hpp"
 #include "FunctionDeclaration.hpp"
 #include "IdentifierExpression.hpp"
 #include "IfStatement.hpp"
+#include "IndexExpression.hpp"
+#include "IteratorForStatement.hpp"
 #include "LiteralExpression.hpp"
 #include "Program.hpp"
+#include "RangeExpression.hpp"
+#include "ReturnStatement.hpp"
+#include "TradicionalForStatement.hpp"
 #include "UnaryExpression.hpp"
 #include "VariableDeclaration.hpp"
 #include "WhileStatement.hpp"
@@ -27,10 +27,9 @@ constexpr std::string_view expressionColor = "#E3F2FD";
 constexpr std::string_view statementColor = "#E8F5E9";
 constexpr std::string_view declarationColor = "#FFF3E0";
 constexpr std::string_view rootColor = "#EDE7F6";
-}
+} // namespace
 
-std::string ASTDotPrinter::generate(const ASTNode& root)
-{
+std::string ASTDotPrinter::generate(const ASTNode& root) {
     output.str({});
     output.clear();
     nodeIds.clear();
@@ -48,13 +47,11 @@ std::string ASTDotPrinter::generate(const ASTNode& root)
     return output.str();
 }
 
-void ASTDotPrinter::print(const ASTNode& root, std::ostream& out)
-{
+void ASTDotPrinter::print(const ASTNode& root, std::ostream& out) {
     out << generate(root);
 }
 
-ASTDotPrinter::NodeId ASTDotPrinter::visitNode(const ASTNode& node)
-{
+ASTDotPrinter::NodeId ASTDotPrinter::visitNode(const ASTNode& node) {
     if (const auto found = nodeIds.find(&node); found != nodeIds.end()) {
         return found->second;
     }
@@ -68,23 +65,20 @@ ASTDotPrinter::NodeId ASTDotPrinter::visitNode(const ASTNode& node)
     return created->second;
 }
 
-ASTDotPrinter::NodeId ASTDotPrinter::createNode(const ASTNode& node,
-                                                std::string_view label,
-                                                std::string_view fillColor)
-{
+ASTDotPrinter::NodeId ASTDotPrinter::createNode(const ASTNode& node, std::string_view label,
+                                                std::string_view fillColor) {
     if (const auto found = nodeIds.find(&node); found != nodeIds.end()) {
         return found->second;
     }
 
     const NodeId id = nextId++;
     nodeIds.emplace(&node, id); // Register before visiting children: cycle-safe.
-    output << "    n" << id << " [label=\"" << escape(label)
-           << "\", fillcolor=\"" << fillColor << "\"];\n";
+    output << "    n" << id << " [label=\"" << escape(label) << "\", fillcolor=\"" << fillColor
+           << "\"];\n";
     return id;
 }
 
-void ASTDotPrinter::createEdge(NodeId from, NodeId to, std::string_view role)
-{
+void ASTDotPrinter::createEdge(NodeId from, NodeId to, std::string_view role) {
     output << "    n" << from << " -> n" << to;
     if (!role.empty()) {
         output << " [label=\"" << escape(role) << "\"]";
@@ -92,136 +86,145 @@ void ASTDotPrinter::createEdge(NodeId from, NodeId to, std::string_view role)
     output << ";\n";
 }
 
-std::string ASTDotPrinter::escape(std::string_view text) const
-{
+std::string ASTDotPrinter::escape(std::string_view text) const {
     std::string escaped;
     escaped.reserve(text.size());
     for (const char character : text) {
         switch (character) {
-        case '\\': escaped += "\\\\"; break;
-        case '"': escaped += "\\\""; break;
-        case '\n': escaped += "\\n"; break;
-        case '\r': escaped += "\\r"; break;
-        case '\t': escaped += "\\t"; break;
-        default: escaped += character; break;
+            case '\\':
+                escaped += "\\\\";
+                break;
+            case '"':
+                escaped += "\\\"";
+                break;
+            case '\n':
+                escaped += "\\n";
+                break;
+            case '\r':
+                escaped += "\\r";
+                break;
+            case '\t':
+                escaped += "\\t";
+                break;
+            default:
+                escaped += character;
+                break;
         }
     }
     return escaped;
 }
 
-void ASTDotPrinter::visit(const BinaryExpression& node)
-{
+void ASTDotPrinter::visit(const BinaryExpression& node) {
     const NodeId id = createNode(node, "Binary expression\n" + to_string(node.op), expressionColor);
-    if (node.left) createEdge(id, visitNode(*node.left), "left");
-    if (node.right) createEdge(id, visitNode(*node.right), "right");
+    if (node.left)
+        createEdge(id, visitNode(*node.left), "left");
+    if (node.right)
+        createEdge(id, visitNode(*node.right), "right");
 }
 
-void ASTDotPrinter::visit(const CallExpression &node)
-{
+void ASTDotPrinter::visit(const CallExpression& node) {
     createNode(node, "Call", expressionColor);
 }
 
-void ASTDotPrinter::visit(const CastExpression &node)
-{
+void ASTDotPrinter::visit(const CastExpression& node) {
     createNode(node, "Cast", expressionColor);
 }
 
-void ASTDotPrinter::visit(const IndexExpression &node)
-{
+void ASTDotPrinter::visit(const IndexExpression& node) {
     createNode(node, "Index", expressionColor);
 }
 
-void ASTDotPrinter::visit(const RangeExpression &node)
-{
+void ASTDotPrinter::visit(const RangeExpression& node) {
     createNode(node, "Range", expressionColor);
 }
 
-void ASTDotPrinter::visit(const UnaryExpression& node)
-{
+void ASTDotPrinter::visit(const UnaryExpression& node) {
     const NodeId id = createNode(node, "Unary expression\n" + to_string(node.op), expressionColor);
-    if (node.operand) createEdge(id, visitNode(*node.operand), "operand");
+    if (node.operand)
+        createEdge(id, visitNode(*node.operand), "operand");
 }
 
-void ASTDotPrinter::visit(const AssignmentExpression& node)
-{
+void ASTDotPrinter::visit(const AssignmentExpression& node) {
     const NodeId id = createNode(node, "Assignment\n" + to_string(node.op), expressionColor);
-    if (node.left) createEdge(id, visitNode(*node.left), "target");
-    if (node.right) createEdge(id, visitNode(*node.right), "value");
+    if (node.left)
+        createEdge(id, visitNode(*node.left), "target");
+    if (node.right)
+        createEdge(id, visitNode(*node.right), "value");
 }
 
-void ASTDotPrinter::visit(const LiteralExpression& node)
-{
+void ASTDotPrinter::visit(const LiteralExpression& node) {
     createNode(node, "Literal\n" + to_string(node.value.type) + ": " + node.value.lexeme,
                expressionColor);
 }
 
-void ASTDotPrinter::visit(const IdentifierExpression& node)
-{
+void ASTDotPrinter::visit(const IdentifierExpression& node) {
     createNode(node, "Identifier\n" + node.name, expressionColor);
 }
 
-void ASTDotPrinter::visit(const ExpressionStatement& node)
-{
+void ASTDotPrinter::visit(const ExpressionStatement& node) {
     const NodeId id = createNode(node, "Expression statement", statementColor);
-    if (node.expression) createEdge(id, visitNode(*node.expression), "expression");
+    if (node.expression)
+        createEdge(id, visitNode(*node.expression), "expression");
 }
 
-void ASTDotPrinter::visit(const VariableDeclaration& node)
-{
-    const NodeId id = createNode(node, "Variable declaration\n" + to_string(node.getType()) + " " + node.getName(),
-                                 statementColor);
-    if (node.getInitializer()) createEdge(id, visitNode(*node.getInitializer()), "initializer");
+void ASTDotPrinter::visit(const VariableDeclaration& node) {
+    const NodeId id = createNode(
+        node, "Variable declaration\n" + to_string(node.getType()) + " " + node.getName(),
+        statementColor);
+    if (node.getInitializer())
+        createEdge(id, visitNode(*node.getInitializer()), "initializer");
 }
 
-void ASTDotPrinter::visit(const BlockStatement& node)
-{
+void ASTDotPrinter::visit(const BlockStatement& node) {
     const NodeId id = createNode(node, "Block", statementColor);
     for (const auto& statement : node.items) {
-        if (statement) createEdge(id, visitNode(*statement), "statement");
+        if (statement)
+            createEdge(id, visitNode(*statement), "statement");
     }
 }
 
-void ASTDotPrinter::visit(const IfStatement& node)
-{
+void ASTDotPrinter::visit(const IfStatement& node) {
     const NodeId id = createNode(node, "If", statementColor);
-    if (node.getCondition()) createEdge(id, visitNode(*node.getCondition()), "condition");
-    if (node.getThenBranch()) createEdge(id, visitNode(*node.getThenBranch()), "then");
-    if (node.getElseBranch()) createEdge(id, visitNode(*node.getElseBranch()), "else");
+    if (node.getCondition())
+        createEdge(id, visitNode(*node.getCondition()), "condition");
+    if (node.getThenBranch())
+        createEdge(id, visitNode(*node.getThenBranch()), "then");
+    if (node.getElseBranch())
+        createEdge(id, visitNode(*node.getElseBranch()), "else");
 }
 
-void ASTDotPrinter::visit(const WhileStatement& node)
-{
+void ASTDotPrinter::visit(const WhileStatement& node) {
     const NodeId id = createNode(node, "While", statementColor);
-    if (node.getCondition()) createEdge(id, visitNode(*node.getCondition()), "condition");
-    if (node.getBody()) createEdge(id, visitNode(*node.getBody()), "body");
+    if (node.getCondition())
+        createEdge(id, visitNode(*node.getCondition()), "condition");
+    if (node.getBody())
+        createEdge(id, visitNode(*node.getBody()), "body");
 }
 
-void ASTDotPrinter::visit(const IteratorForStatement& node)
-{
+void ASTDotPrinter::visit(const IteratorForStatement& node) {
     createNode(node, "For-in", statementColor);
 }
 
-void ASTDotPrinter::visit(const TradicionalForStatement& node)
-{
+void ASTDotPrinter::visit(const TradicionalForStatement& node) {
     createNode(node, "For", statementColor);
 }
 
-void ASTDotPrinter::visit(const ReturnStatement& node)
-{
+void ASTDotPrinter::visit(const ReturnStatement& node) {
     createNode(node, "Return", statementColor);
 }
 
-void ASTDotPrinter::visit(const FunctionDeclaration& node)
-{
-    const NodeId id = createNode(node, "Function declaration\n" + node.name + " -> " + to_string(node.returnType),
-                                 declarationColor);
-    if (node.body) createEdge(id, visitNode(*node.body), "body");
+void ASTDotPrinter::visit(const FunctionDeclaration& node) {
+    const NodeId id =
+        createNode(node, "Function declaration\n" + node.name + " -> " + to_string(node.returnType),
+                   declarationColor);
+    if (node.body)
+        createEdge(id, visitNode(*node.body), "body");
 }
 
-void ASTDotPrinter::visit(const Program& node)
-{
+void ASTDotPrinter::visit(const Program& node) {
     const NodeId id = createNode(node, "Program", rootColor);
     for (const auto& statement : node.items) {
-        if (statement) createEdge(id, visitNode(*statement), "item");
+        if (statement)
+            createEdge(id, visitNode(*statement), "item");
     }
 }

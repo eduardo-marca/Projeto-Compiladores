@@ -2,6 +2,4 @@
 
 #include "Statement.hpp"
 
-class ForStatement : public Statement {
-
-};
+class ForStatement : public Statement {};

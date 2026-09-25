@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Declaration.hpp"
 #include "ASTVisitor.hpp"
-#include "Type.hpp"
 #include "BlockStatement.hpp"
+#include "Declaration.hpp"
 #include "Parameter.hpp"
+#include "Type.hpp"
 
 #include <string>
 #include <vector>
 
 class FunctionDeclaration : public Declaration {
-public:
+  public:
     std::string name;
     std::vector<Parameter> parameters;
     Type returnType;
@@ -20,6 +20,7 @@ public:
         visitor.visit(*this);
     }
 
-    FunctionDeclaration(std::string name, std::vector<Parameter> parameters, Type returnType, BlockPtr body)
+    FunctionDeclaration(std::string name, std::vector<Parameter> parameters, Type returnType,
+                        BlockPtr body)
         : name(name), parameters(parameters), returnType(returnType), body(std::move(body)) {}
 };

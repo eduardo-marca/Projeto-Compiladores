@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Expression.hpp"
 #include "ASTVisitor.hpp"
+#include "Expression.hpp"
 #include "Token.hpp"
 
 class UnaryExpression : public Expression {
-public:
+  public:
     TokenType op;
     ExpressionPtr operand;
     bool postfix;

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Expression.hpp"
 #include "ASTVisitor.hpp"
+#include "Expression.hpp"
 #include "TokenType.hpp"
 
 class AssignmentExpression : public Expression {
-public:
+  public:
     ExpressionPtr left;
     TokenType op;
     ExpressionPtr right;
@@ -18,6 +18,7 @@ public:
     }
 
     std::string To_String() const override {
-        return "Assignment(" + left->To_String() + ", " + to_string(op) + ", " + right->To_String() + ")";
+        return "Assignment(" + left->To_String() + ", " + to_string(op) + ", " +
+               right->To_String() + ")";
     }
 };

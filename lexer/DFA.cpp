@@ -1,27 +1,24 @@
 #include "DFA.hpp"
 
-void DFA::addTransition(State from, CharSet symbols, State to)
-{
+void DFA::addTransition(State from, CharSet symbols, State to) {
     // adiciona transição para cada caractere ASCII contido no CharSet
-    for(int i = 0; i < 256; i++) {
+    for (int i = 0; i < 256; i++) {
         char c = static_cast<char>(i);
-        if(symbols.contains(c)) transitions[from][c] = to;
+        if (symbols.contains(c))
+            transitions[from][c] = to;
     }
 }
 
-void DFA::setFinal(State state, TokenType type)
-{
+void DFA::setFinal(State state, TokenType type) {
     finalStates[state] = type;
 }
 
-std::optional<State> DFA::transition(State state, Symbol symbol) const
-{
+std::optional<State> DFA::transition(State state, Symbol symbol) const {
     // verifica se existe transição no map
     const auto stateIt = transitions.find(state);
-    if(stateIt != transitions.end())
-    {
+    if (stateIt != transitions.end()) {
         const auto symbolIt = stateIt->second.find(symbol);
-        if(symbolIt != stateIt->second.end())
+        if (symbolIt != stateIt->second.end())
             // retorna estado da tranição
             return symbolIt->second;
     }
@@ -30,24 +27,21 @@ std::optional<State> DFA::transition(State state, Symbol symbol) const
     return std::nullopt;
 }
 
-bool DFA::isFinal(State state) const
-{
+bool DFA::isFinal(State state) const {
     return finalStates.count(state) != 0;
 }
 
-std::optional<TokenType> DFA::tokenType(State state) const
-{
-    if(isFinal(state)) return finalStates.find(state)->second;
+std::optional<TokenType> DFA::tokenType(State state) const {
+    if (isFinal(state))
+        return finalStates.find(state)->second;
     return std::nullopt;
 }
 
-State DFA::getInitialState() const
-{
+State DFA::getInitialState() const {
     return initialState;
 }
 
-void DFA::buildLexerDFA()
-{
+void DFA::buildLexerDFA() {
     // Menos e seta
     addTransition(0, CharSet::single('-'), 3);
     setFinal(3, TokenType::MINUS);

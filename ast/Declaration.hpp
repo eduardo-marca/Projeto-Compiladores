@@ -3,7 +3,7 @@
 #include "BlockItem.hpp"
 
 class Declaration : public BlockItem {
-public:
+  public:
     virtual ~Declaration() = default;
 };
 

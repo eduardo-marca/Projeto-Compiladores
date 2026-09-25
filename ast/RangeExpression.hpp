@@ -2,11 +2,11 @@
 
 #include <sstream>
 
-#include "Expression.hpp"
 #include "ASTVisitor.hpp"
+#include "Expression.hpp"
 
 class RangeExpression : public Expression {
-public:
+  public:
     ExpressionPtr left;
     ExpressionPtr right;
 
@@ -19,10 +19,7 @@ public:
 
     std::string To_String() const override {
         std::ostringstream oss;
-        oss << "Range("
-        << left->To_String() << ", "
-        << right->To_String()
-        << ")";
+        oss << "Range(" << left->To_String() << ", " << right->To_String() << ")";
         return oss.str();
     }
 };

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Statement.hpp"
-#include "Expression.hpp"
 #include "ASTVisitor.hpp"
+#include "Expression.hpp"
+#include "Statement.hpp"
 
 class ReturnStatement : public Statement {
-public:
+  public:
     ExpressionPtr value;
 
     ReturnStatement(ExpressionPtr value) : value(std::move(value)) {}
@@ -17,8 +17,10 @@ public:
     std::string To_String() const override {
         std::ostringstream oss;
         oss << "Return(";
-        if (value) oss << value->To_String();
-        else oss << "Void";
+        if (value)
+            oss << value->To_String();
+        else
+            oss << "Void";
         oss << ")";
         return oss.str();
     }

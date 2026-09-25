@@ -3,7 +3,7 @@
 #include "AST.hpp"
 
 class BlockItem : public ASTNode {
-public:
+  public:
     virtual ~BlockItem() = default;
 };
 

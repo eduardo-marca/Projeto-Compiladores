@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Statement.hpp"
 #include "ASTVisitor.hpp"
+#include "Statement.hpp"
 
-#include <vector>
 #include <sstream>
+#include <vector>
 
 class BlockStatement : public Statement {
-public:
+  public:
     std::vector<std::unique_ptr<BlockItem>> items;
 
     void add(std::unique_ptr<BlockItem> item) {
@@ -21,7 +21,7 @@ public:
     std::string To_String() const override {
         std::ostringstream oss;
         oss << "Block(" << std::endl;
-        for(auto& item : items) {
+        for (auto& item : items) {
             oss << '\t' << item->To_String() << std::endl;
         }
         oss << ")";

@@ -3,11 +3,11 @@
 #include <sstream>
 #include <vector>
 
-#include "Expression.hpp"
 #include "ASTVisitor.hpp"
+#include "Expression.hpp"
 
 class CallExpression : public Expression {
-public:
+  public:
     ExpressionPtr callee;
     std::vector<ExpressionPtr> arguments;
 

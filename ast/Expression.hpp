@@ -3,7 +3,7 @@
 #include "AST.hpp"
 
 class Expression : public ASTNode {
-public:
+  public:
     virtual ~Expression() = default;
 };
 

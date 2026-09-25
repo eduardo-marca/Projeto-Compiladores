@@ -1,32 +1,32 @@
 #pragma once
 
+#include <iostream>
 #include <sstream>
 #include <vector>
-#include <iostream>
 
-#include "Token.hpp"
-#include "Statement.hpp"
+#include "BlockStatement.hpp"
+#include "Declaration.hpp"
 #include "Expression.hpp"
+#include "ExpressionStatement.hpp"
 #include "ParseError.hpp"
 #include "Program.hpp"
-#include "ExpressionStatement.hpp"
-#include "Declaration.hpp"
-#include "BlockStatement.hpp"
+#include "Statement.hpp"
+#include "Token.hpp"
 
-#include "Type.hpp"
 #include "Parameter.hpp"
+#include "Type.hpp"
 
 class Parser {
-private:
+  private:
     std::vector<Token> tokens;
     size_t current = 0;
 
-public:
+  public:
     explicit Parser(const std::vector<Token>& tokens) : tokens(tokens) {}
 
     ProgramPtr parse();
 
-private:
+  private:
     // Navegação de tokens
     const Token& peek() const;
     const Token& previous() const;
@@ -37,7 +37,7 @@ private:
 
     bool check(TokenType type) const;
     bool checkNext(TokenType type) const;
-    
+
     bool match(TokenType type);
     bool match(std::initializer_list<TokenType> types);
 
@@ -51,13 +51,13 @@ private:
     // Grammar rules
     ProgramPtr parseProgram();
     BlockItemPtr parseBlockItem();
-    //std::unique_ptr<StatementList> parseStatementList();
+    // std::unique_ptr<StatementList> parseStatementList();
 
     // declarações
     DeclarationPtr parseDeclaration();
     DeclarationPtr parseVariableDeclaration();
     DeclarationPtr parseFunctionDeclaration();
-    
+
     // instruções
     StatementPtr parseStatement();
     StatementPtr parseExpressionStatement();

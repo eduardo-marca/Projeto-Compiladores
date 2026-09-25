@@ -5,104 +5,91 @@ namespace {
 
 constexpr std::size_t charCount = 256;
 
-std::size_t indexOf(char c)
-{
+std::size_t indexOf(char c) {
     return static_cast<unsigned char>(c);
 }
 
-}
+} // namespace
 
-CharSet CharSet::any()
-{
+CharSet CharSet::any() {
     CharSet cs;
     cs.chars.fill(true);
     return cs;
 }
 
-CharSet CharSet::none()
-{
+CharSet CharSet::none() {
     return CharSet{};
 }
 
-CharSet CharSet::range(char first, char last)
-{
+CharSet CharSet::range(char first, char last) {
     CharSet cs;
     cs.addRange(first, last);
     return cs;
 }
 
-CharSet CharSet::single(char c)
-{
+CharSet CharSet::single(char c) {
     CharSet cs;
     cs.chars[static_cast<unsigned char>(c)] = true;
     return cs;
 }
 
-bool CharSet::contains(char c) const
-{
+bool CharSet::contains(char c) const {
     return chars[indexOf(c)];
 }
 
-CharSet &CharSet::add(char c)
-{
+CharSet& CharSet::add(char c) {
     chars[indexOf(c)] = true;
     return *this;
 }
 
-CharSet &CharSet::addRange(char first, char last)
-{
+CharSet& CharSet::addRange(char first, char last) {
     const auto start = indexOf(first);
     const auto end = indexOf(last);
 
-    if(start > end)
+    if (start > end)
         return *this;
 
-    for(std::size_t i = start; i <= end; i++)
+    for (std::size_t i = start; i <= end; i++)
         chars[i] = true;
 
     return *this;
 }
 
-CharSet &CharSet::remove(char c)
-{
+CharSet& CharSet::remove(char c) {
     chars[indexOf(c)] = false;
     return *this;
 }
 
-CharSet &CharSet::removeRange(char first, char last)
-{
+CharSet& CharSet::removeRange(char first, char last) {
     const auto start = indexOf(first);
     const auto end = indexOf(last);
 
     // se intervalo for inválido, ignora
-    if(start > end)
+    if (start > end)
         return *this;
 
-    for(std::size_t i = start; i <= end; i++)
+    for (std::size_t i = start; i <= end; i++)
         chars[i] = false;
 
     return *this;
 }
 
-CharSet &CharSet::unite(const CharSet &other)
-{
-    for(std::size_t i = 0; i < charCount; i++)
+CharSet& CharSet::unite(const CharSet& other) {
+    for (std::size_t i = 0; i < charCount; i++)
         chars[i] = chars[i] || other.chars[i];
 
     return *this;
 }
 
-CharSet &CharSet::intersect(const CharSet &other)
-{
-    for(std::size_t i = 0; i < charCount; i++)
+CharSet& CharSet::intersect(const CharSet& other) {
+    for (std::size_t i = 0; i < charCount; i++)
         chars[i] = chars[i] && other.chars[i];
 
     return *this;
 }
 
-CharSet &CharSet::subtract(const CharSet &other)
-{
-    for(std::size_t i = 0; i < charCount; i++)
+CharSet& CharSet::subtract(const CharSet& other) {
+    for (std::size_t i = 0; i < charCount; i++)
         chars[i] = chars[i] && !other.chars[i];
 
     return *this;

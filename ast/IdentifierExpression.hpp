@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Expression.hpp"
 #include "ASTVisitor.hpp"
+#include "Expression.hpp"
 
 #include <string>
 
 class IdentifierExpression : public Expression {
-public:
+  public:
     std::string name;
 
     IdentifierExpression(std::string name) : name(name) {}

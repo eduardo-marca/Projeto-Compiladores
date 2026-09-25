@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Expression.hpp"
 #include "ASTVisitor.hpp"
-#include "Value.hpp"
+#include "Expression.hpp"
 #include "Token.hpp"
+#include "Value.hpp"
 
 class LiteralExpression : public Expression {
-public:
+  public:
     Value value;
     LiteralExpression(Value value) : value(std::move(value)) {}
 

@@ -1,23 +1,16 @@
 #pragma once
 
-#include <variant>
-#include <string>
 #include <cstdint>
+#include <string>
+#include <variant>
 
 #include "Type.hpp"
 
 class Value {
-public:
+  public:
     Type type;
     std::string lexeme;
-    std::variant<
-        std::monostate,
-        std::int64_t,
-        double,
-        bool,
-        char,
-        std::string
-    > val;
+    std::variant<std::monostate, std::int64_t, double, bool, char, std::string> val;
 
     std::string To_String() const {
         return "Value(" + to_string(type) + ", " + lexeme + ")";

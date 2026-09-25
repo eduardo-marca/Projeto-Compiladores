@@ -3,12 +3,12 @@
 #include <array>
 
 class CharSet {
-public:
+  public:
     // CharSet com todos os caracteres
     static CharSet any();
     // CharSet com nenhum caractere
     static CharSet none();
-    
+
     // CharSet com range incluso
     static CharSet range(char first, char last);
     // CharSet com um único caractere
@@ -34,7 +34,7 @@ public:
     // Faz a diferença dos CharSet
     CharSet& subtract(const CharSet& other);
 
-private:
+  private:
     // para cada caractere ASCII, marca se está incluso ou não
     std::array<bool, 256> chars{};
 };
@@ -42,56 +42,47 @@ private:
 // CharSets predefinidos para uso geral
 namespace CharSets {
 
-    inline CharSet Digit() {
-        return CharSet::range('0', '9');
-    }
-
-    inline CharSet Lowercase() {
-        return CharSet::range('a', 'z');
-    }
-
-    inline CharSet Uppercase() {
-        return CharSet::range('A', 'Z');
-    }
-
-    inline CharSet Letter() {
-        return Lowercase()
-            .unite(Uppercase());
-    }
-
-    inline CharSet IdentifierStart() {
-        return Letter()
-            .add('_');
-    }
-
-    inline CharSet IdentifierContinue() {
-        return IdentifierStart()
-            .unite(Digit());
-    }
-
-    inline CharSet StringCharacter() {
-        return CharSet::any()
-            .remove('"')
-            .remove('\n');
-    }
-
-    inline CharSet LineCommentCharacter() {
-        return CharSet::any()
-            .remove('\n');
-    }
-
-    inline CharSet BlockCommentCharacter() {
-        return CharSet::any();
-    }
-
-    inline CharSet Whitespace() {
-        return CharSet::single(' ')
-            .add('\t')
-            .add('\n')
-            .add('\r');
-    }
-
-    inline CharSet Any() {
-        return CharSet::any();
-    }
+inline CharSet Digit() {
+    return CharSet::range('0', '9');
 }
+
+inline CharSet Lowercase() {
+    return CharSet::range('a', 'z');
+}
+
+inline CharSet Uppercase() {
+    return CharSet::range('A', 'Z');
+}
+
+inline CharSet Letter() {
+    return Lowercase().unite(Uppercase());
+}
+
+inline CharSet IdentifierStart() {
+    return Letter().add('_');
+}
+
+inline CharSet IdentifierContinue() {
+    return IdentifierStart().unite(Digit());
+}
+
+inline CharSet StringCharacter() {
+    return CharSet::any().remove('"').remove('\n');
+}
+
+inline CharSet LineCommentCharacter() {
+    return CharSet::any().remove('\n');
+}
+
+inline CharSet BlockCommentCharacter() {
+    return CharSet::any();
+}
+
+inline CharSet Whitespace() {
+    return CharSet::single(' ').add('\t').add('\n').add('\r');
+}
+
+inline CharSet Any() {
+    return CharSet::any();
+}
+} // namespace CharSets

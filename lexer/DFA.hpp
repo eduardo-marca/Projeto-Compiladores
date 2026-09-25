@@ -1,17 +1,17 @@
 #pragma once
 
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 
-#include <optional>
-#include "Token.hpp"
 #include "CharSet.hpp"
+#include "Token.hpp"
+#include <optional>
 
 using State = int;
 using Symbol = char;
 
 class DFA {
-public:
+  public:
     DFA(State initial) : initialState(initial) {}
 
     // adiciona transição ao DFA
@@ -35,13 +35,10 @@ public:
     // adiciona transições e estados finais ao DFA
     void buildLexerDFA();
 
-private:
+  private:
     State initialState;
-    
-    std::unordered_map<
-        State,
-        std::unordered_map<Symbol, State>
-    > transitions;
-    
+
+    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+
     std::unordered_map<State, TokenType> finalStates;
 };

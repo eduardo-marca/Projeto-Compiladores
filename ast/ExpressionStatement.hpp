@@ -1,11 +1,11 @@
 #pragma once
 
+#include "ASTVisitor.hpp"
 #include "Expression.hpp"
 #include "Statement.hpp"
-#include "ASTVisitor.hpp"
 
 class ExpressionStatement : public Statement {
-public:
+  public:
     virtual ~ExpressionStatement() = default;
 
     ExpressionPtr expression;

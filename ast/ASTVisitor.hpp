@@ -23,7 +23,7 @@ class TradicionalForStatement;
 class ReturnStatement;
 
 class ASTVisitor {
-public:
+  public:
     virtual ~ASTVisitor() = default;
 
     // Expressions
@@ -31,7 +31,7 @@ public:
     virtual void visit(const CallExpression&) = 0;
     virtual void visit(const CastExpression&) = 0;
     virtual void visit(const IndexExpression&) = 0;
-    virtual void visit(const RangeExpression&) = 0; 
+    virtual void visit(const RangeExpression&) = 0;
     virtual void visit(const UnaryExpression&) = 0;
     virtual void visit(const AssignmentExpression&) = 0;
     virtual void visit(const LiteralExpression&) = 0;

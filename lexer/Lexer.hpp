@@ -3,12 +3,12 @@
 #include "DFA.hpp"
 #include "LexicalError.hpp"
 
-#include <unordered_map>
 #include <sstream>
+#include <unordered_map>
 #include <vector>
 
 class Lexer {
-public:
+  public:
     explicit Lexer(const std::string& source);
 
     std::vector<Token> getTokens();
@@ -16,7 +16,7 @@ public:
     // acha o próximo token do código
     Token nextToken();
 
-private:
+  private:
     // código fonte
     std::string source;
     std::size_t position = 0;

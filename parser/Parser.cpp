@@ -1,68 +1,60 @@
 #include "Parser.hpp"
 #include "ParseError.hpp"
 
-#include "BinaryExpression.hpp"
-#include "RangeExpression.hpp"
 #include "AssignmentExpression.hpp"
-#include "LiteralExpression.hpp"
-#include "IdentifierExpression.hpp"
-#include "UnaryExpression.hpp"
+#include "BinaryExpression.hpp"
 #include "BlockStatement.hpp"
-#include "IfStatement.hpp"
-#include "WhileStatement.hpp"
-#include "ForStatement.hpp"
-#include "IteratorForStatement.hpp"
-#include "TradicionalForStatement.hpp"
-#include "ReturnStatement.hpp"
-#include "VariableDeclaration.hpp"
-#include "FunctionDeclaration.hpp"
-#include "CastExpression.hpp"
-#include "RangeExpression.hpp"
-#include "IndexExpression.hpp"
 #include "CallExpression.hpp"
+#include "CastExpression.hpp"
+#include "ForStatement.hpp"
+#include "FunctionDeclaration.hpp"
+#include "IdentifierExpression.hpp"
+#include "IfStatement.hpp"
+#include "IndexExpression.hpp"
+#include "IteratorForStatement.hpp"
+#include "LiteralExpression.hpp"
+#include "RangeExpression.hpp"
+#include "ReturnStatement.hpp"
+#include "TradicionalForStatement.hpp"
+#include "UnaryExpression.hpp"
+#include "VariableDeclaration.hpp"
+#include "WhileStatement.hpp"
 
-ProgramPtr Parser::parse()
-{
+ProgramPtr Parser::parse() {
     return parseProgram();
 }
 
-const Token &Parser::peek() const
-{
+const Token& Parser::peek() const {
     return tokens[current];
 }
 
-const Token &Parser::previous() const
-{
+const Token& Parser::previous() const {
     return tokens[current - 1];
 }
 
-bool Parser::check(TokenType type) const
-{
+bool Parser::check(TokenType type) const {
     if (isAtEnd())
         return type == TokenType::END_OF_FILE;
 
     return peek().type == type;
 }
 
-bool Parser::checkNext(TokenType type) const
-{
+bool Parser::checkNext(TokenType type) const {
     if (current + 1 >= tokens.size())
         return type == TokenType::END_OF_FILE;
 
     return tokens[current + 1].type == type;
 }
 
-bool Parser::match(TokenType type)
-{
-    if(!check(type))
+bool Parser::match(TokenType type) {
+    if (!check(type))
         return false;
 
     advance();
     return true;
 }
 
-bool Parser::match(std::initializer_list<TokenType> types)
-{
+bool Parser::match(std::initializer_list<TokenType> types) {
     for (TokenType type : types) {
         if (check(type)) {
             advance();
@@ -73,45 +65,34 @@ bool Parser::match(std::initializer_list<TokenType> types)
     return false;
 }
 
-const Token &Parser::consume(TokenType type, std::string_view message)
-{
+const Token& Parser::consume(TokenType type, std::string_view message) {
     if (check(type))
         return advance();
 
     throw error(peek(), message);
 }
 
-const Token &Parser::advance()
-{
-    if(!isAtEnd())
+const Token& Parser::advance() {
+    if (!isAtEnd())
         current++;
 
     return previous();
 }
 
-bool Parser::isAtEnd() const
-{
+bool Parser::isAtEnd() const {
     return peek().type == TokenType::END_OF_FILE;
 }
 
-ParseError Parser::error(const Token &token, std::string_view message)
-{
+ParseError Parser::error(const Token& token, std::string_view message) {
     std::ostringstream oss;
 
-    oss << "Parse error at "
-    << token.line
-    << ":"
-    << token.column
-    << ": "
-    << message
-    << ", found "
-    << to_string(token.type);
+    oss << "Parse error at " << token.line << ":" << token.column << ": " << message << ", found "
+        << to_string(token.type);
 
     return ParseError(oss.str());
 }
 
-void Parser::synchronize()
-{
+void Parser::synchronize() {
     advance();
 
     while (!isAtEnd()) {
@@ -119,59 +100,60 @@ void Parser::synchronize()
             return;
 
         switch (peek().type) {
-        case TokenType::VAR:
-        case TokenType::LET:
-        case TokenType::IF:
-        case TokenType::FOR:
-        case TokenType::WHILE:
-        case TokenType::RETURN:
-        case TokenType::FN:
-            return;
+            case TokenType::VAR:
+            case TokenType::LET:
+            case TokenType::IF:
+            case TokenType::FOR:
+            case TokenType::WHILE:
+            case TokenType::RETURN:
+            case TokenType::FN:
+                return;
 
-        default:
-            advance();
+            default:
+                advance();
         }
     }
 }
 
-ProgramPtr Parser::parseProgram()
-{
+ProgramPtr Parser::parseProgram() {
     ProgramPtr program = std::make_unique<Program>();
 
-    while(!isAtEnd()) {
+    while (!isAtEnd()) {
         program->add(parseBlockItem());
     }
 
     return program;
 }
 
-BlockItemPtr Parser::parseBlockItem()
-{
-    if(check(TokenType::LET) || check(TokenType::VAR) || check(TokenType::FN)) {
+BlockItemPtr Parser::parseBlockItem() {
+    if (check(TokenType::LET) || check(TokenType::VAR) || check(TokenType::FN)) {
         return parseDeclaration();
     }
 
     return parseStatement();
 }
 
-StatementPtr Parser::parseStatement()
-{
-    if(check(TokenType::LEFT_BRACE)) return parseBlock();
-    if(check(TokenType::IF)) return parseIf();
-    if(check(TokenType::WHILE)) return parseWhile();
-    if(check(TokenType::FOR)) return parseFor();
-    if(check(TokenType::RETURN)) return parseReturn();
+StatementPtr Parser::parseStatement() {
+    if (check(TokenType::LEFT_BRACE))
+        return parseBlock();
+    if (check(TokenType::IF))
+        return parseIf();
+    if (check(TokenType::WHILE))
+        return parseWhile();
+    if (check(TokenType::FOR))
+        return parseFor();
+    if (check(TokenType::RETURN))
+        return parseReturn();
 
     return parseExpressionStatement();
 }
 
-BlockPtr Parser::parseBlock()
-{
+BlockPtr Parser::parseBlock() {
     consume(TokenType::LEFT_BRACE, "Expected " + to_string(TokenType::LEFT_BRACE));
 
     auto block = std::make_unique<BlockStatement>();
 
-    while(!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
         block->add(parseBlockItem());
     }
 
@@ -180,23 +162,21 @@ BlockPtr Parser::parseBlock()
     return block;
 }
 
-StatementPtr Parser::parseIf()
-{
+StatementPtr Parser::parseIf() {
     consume(TokenType::IF, "Expected IF");
 
     ExpressionPtr condition = parseExpression();
     StatementPtr thenBranch = parseBlock();
 
-    if(match(TokenType::ELSE)) {
+    if (match(TokenType::ELSE)) {
         StatementPtr elseBranch = parseBlock();
-        return std::make_unique<IfStatement>(std::move(condition), std::move(thenBranch)
-            , std::move(elseBranch));
+        return std::make_unique<IfStatement>(std::move(condition), std::move(thenBranch),
+                                             std::move(elseBranch));
     }
     return std::make_unique<IfStatement>(std::move(condition), std::move(thenBranch));
 }
 
-StatementPtr Parser::parseWhile()
-{
+StatementPtr Parser::parseWhile() {
     consume(TokenType::WHILE, "Expected WHILE");
 
     ExpressionPtr condition = parseExpression();
@@ -205,8 +185,7 @@ StatementPtr Parser::parseWhile()
     return std::make_unique<WhileStatement>(std::move(condition), std::move(body));
 }
 
-StatementPtr Parser::parseFor()
-{
+StatementPtr Parser::parseFor() {
     consume(TokenType::FOR, "Expected FOR");
 
     if (check(TokenType::IDENTIFIER) && checkNext(TokenType::IN)) {
@@ -216,8 +195,7 @@ StatementPtr Parser::parseFor()
     return parseTradicionalFor();
 }
 
-StatementPtr Parser::parseIteratorFor()
-{
+StatementPtr Parser::parseIteratorFor() {
     Token variable = consume(TokenType::IDENTIFIER, "Expected iterator variable");
 
     consume(TokenType::IN, "Expected" + to_string(TokenType::IN) + "iterator");
@@ -226,47 +204,38 @@ StatementPtr Parser::parseIteratorFor()
 
     auto body = parseBlock();
 
-    return std::make_unique<IteratorForStatement>(
-        variable.lexeme,
-        std::move(iterable),
-        std::move(body)
-    );
+    return std::make_unique<IteratorForStatement>(variable.lexeme, std::move(iterable),
+                                                  std::move(body));
 }
 
-StatementPtr Parser::parseTradicionalFor()
-{
+StatementPtr Parser::parseTradicionalFor() {
     ExpressionPtr initialization = nullptr;
     ExpressionPtr condition = nullptr;
     ExpressionPtr increment = nullptr;
-    
-    if(!check(TokenType::SEMICOLON)) {
+
+    if (!check(TokenType::SEMICOLON)) {
         initialization = parseExpression();
     }
 
     consume(TokenType::SEMICOLON, "Expected SEMICOLON after for init");
 
-    if(!check(TokenType::SEMICOLON)) {
+    if (!check(TokenType::SEMICOLON)) {
         condition = parseExpression();
     }
 
     consume(TokenType::SEMICOLON, "Expected SEMICOLON after for cond");
-    
-    if(!check(TokenType::LEFT_BRACE)) {
+
+    if (!check(TokenType::LEFT_BRACE)) {
         increment = parseExpression();
     }
 
     BlockPtr body = parseBlock();
 
     return std::make_unique<TradicionalForStatement>(
-        std::move(initialization),
-        std::move(condition),
-        std::move(increment),
-        std::move(body)
-    );
+        std::move(initialization), std::move(condition), std::move(increment), std::move(body));
 }
 
-StatementPtr Parser::parseReturn()
-{
+StatementPtr Parser::parseReturn() {
     ExpressionPtr value = nullptr;
 
     consume(TokenType::RETURN, "Exptected RETURN");
@@ -275,16 +244,12 @@ StatementPtr Parser::parseReturn()
         value = parseExpression();
     }
 
-    consume(
-        TokenType::SEMICOLON,
-        "Expected SEMICOLON after return"
-    );
+    consume(TokenType::SEMICOLON, "Expected SEMICOLON after return");
 
     return std::make_unique<ReturnStatement>(std::move(value));
 }
 
-StatementPtr Parser::parseExpressionStatement()
-{
+StatementPtr Parser::parseExpressionStatement() {
     ExpressionPtr expression = parseExpression();
 
     consume(TokenType::SEMICOLON, "Expected SEMICOLON after expression");
@@ -292,19 +257,21 @@ StatementPtr Parser::parseExpressionStatement()
     return std::make_unique<ExpressionStatement>(std::move(expression));
 }
 
-DeclarationPtr Parser::parseDeclaration()
-{
-    if(check(TokenType::FN)) return parseFunctionDeclaration();
+DeclarationPtr Parser::parseDeclaration() {
+    if (check(TokenType::FN))
+        return parseFunctionDeclaration();
     return parseVariableDeclaration();
 }
 
-DeclarationPtr Parser::parseVariableDeclaration()
-{
+DeclarationPtr Parser::parseVariableDeclaration() {
     Mutability mutability;
 
-    if (match(TokenType::LET)) mutability = Mutability::Let;
-    else if (match(TokenType::VAR)) mutability = Mutability::Var;
-    else throw error (peek(), "Expected variable mutability");
+    if (match(TokenType::LET))
+        mutability = Mutability::Let;
+    else if (match(TokenType::VAR))
+        mutability = Mutability::Var;
+    else
+        throw error(peek(), "Expected variable mutability");
 
     Type type = Type::Undefined;
     if (match(TokenType::COLON)) {
@@ -314,48 +281,51 @@ DeclarationPtr Parser::parseVariableDeclaration()
     Token id = consume(TokenType::IDENTIFIER, "Expected IDENTIFIER in variable declaration");
 
     ExpressionPtr initializationExpression = nullptr;
-    if(match(TokenType::ASSIGN)) {
+    if (match(TokenType::ASSIGN)) {
         initializationExpression = parseExpression();
     }
 
     consume(TokenType::SEMICOLON, "Expected SEMICOLON after variable declaration");
 
-    return std::make_unique<VariableDeclaration>(mutability, type, id.lexeme, std::move(initializationExpression));
+    return std::make_unique<VariableDeclaration>(mutability, type, id.lexeme,
+                                                 std::move(initializationExpression));
 }
 
-DeclarationPtr Parser::parseFunctionDeclaration()
-{
+DeclarationPtr Parser::parseFunctionDeclaration() {
     consume(TokenType::FN, "Expected FN for function declaration");
 
-    Token id = consume(TokenType::IDENTIFIER, "Expected " + to_string(TokenType::IDENTIFIER) + " for function declaration");
+    Token id = consume(TokenType::IDENTIFIER, "Expected " + to_string(TokenType::IDENTIFIER) +
+                                                  " for function declaration");
 
-    consume(TokenType::LEFT_PAREN, "Expected " + to_string(TokenType::LEFT_PAREN) + " before parameter list");
+    consume(TokenType::LEFT_PAREN,
+            "Expected " + to_string(TokenType::LEFT_PAREN) + " before parameter list");
 
     std::vector<Parameter> parameters = parseParameterList();
 
-    consume(TokenType::RIGHT_PAREN, "Expected " + to_string(TokenType::RIGHT_PAREN) + " after parameter list");
+    consume(TokenType::RIGHT_PAREN,
+            "Expected " + to_string(TokenType::RIGHT_PAREN) + " after parameter list");
 
-    consume(TokenType::ARROW, "Expected " + to_string(TokenType::ARROW) + " after function declaration");
+    consume(TokenType::ARROW,
+            "Expected " + to_string(TokenType::ARROW) + " after function declaration");
 
     Type returnType = parseType();
 
     BlockPtr body = parseBlock();
 
-    return std::make_unique<FunctionDeclaration>(id.lexeme, parameters, returnType, std::move(body));
+    return std::make_unique<FunctionDeclaration>(id.lexeme, parameters, returnType,
+                                                 std::move(body));
 }
 
-ExpressionPtr Parser::parseExpression()
-{
+ExpressionPtr Parser::parseExpression() {
     return parseAssignment();
 }
 
-ExpressionPtr Parser::parseAssignment()
-{
+ExpressionPtr Parser::parseAssignment() {
     auto left = parseLogicalOr();
 
-    if(match({TokenType::ASSIGN, TokenType::PLUS_EQUAL, TokenType::MINUS_EQUAL, TokenType::STAR_EQUAL,
-                TokenType::SLASH_EQUAL, TokenType::CARET_EQUAL, TokenType::PERCENT_EQUAL}
-    )) {
+    if (match({TokenType::ASSIGN, TokenType::PLUS_EQUAL, TokenType::MINUS_EQUAL,
+               TokenType::STAR_EQUAL, TokenType::SLASH_EQUAL, TokenType::CARET_EQUAL,
+               TokenType::PERCENT_EQUAL})) {
         Token op = previous();
 
         auto right = parseAssignment();
@@ -366,11 +336,10 @@ ExpressionPtr Parser::parseAssignment()
     return left;
 }
 
-ExpressionPtr Parser::parseLogicalOr()
-{
+ExpressionPtr Parser::parseLogicalOr() {
     auto left = parseLogicalXor();
 
-    while(match(TokenType::OR)) {
+    while (match(TokenType::OR)) {
         Token op = previous();
 
         auto right = parseLogicalXor();
@@ -381,11 +350,10 @@ ExpressionPtr Parser::parseLogicalOr()
     return left;
 }
 
-ExpressionPtr Parser::parseLogicalXor()
-{
+ExpressionPtr Parser::parseLogicalXor() {
     auto left = parseLogicalAnd();
 
-    while(match(TokenType::XOR)) {
+    while (match(TokenType::XOR)) {
         Token op = previous();
 
         auto right = parseLogicalAnd();
@@ -396,11 +364,10 @@ ExpressionPtr Parser::parseLogicalXor()
     return left;
 }
 
-ExpressionPtr Parser::parseLogicalAnd()
-{
+ExpressionPtr Parser::parseLogicalAnd() {
     auto left = parseEquality();
 
-    while(match(TokenType::AND)) {
+    while (match(TokenType::AND)) {
         Token op = previous();
 
         auto right = parseEquality();
@@ -411,11 +378,10 @@ ExpressionPtr Parser::parseLogicalAnd()
     return left;
 }
 
-ExpressionPtr Parser::parseEquality()
-{
+ExpressionPtr Parser::parseEquality() {
     auto left = parseComparison();
 
-    while(match({TokenType::EQUAL, TokenType::EXCLAMATION_EQUAL})) {
+    while (match({TokenType::EQUAL, TokenType::EXCLAMATION_EQUAL})) {
         Token op = previous();
 
         auto right = parseComparison();
@@ -426,13 +392,11 @@ ExpressionPtr Parser::parseEquality()
     return left;
 }
 
-ExpressionPtr Parser::parseComparison()
-{
+ExpressionPtr Parser::parseComparison() {
     auto left = parseRange();
 
-    while(match({TokenType::LEFT_ANGLE, TokenType::LEFT_ANGLE_EQUAL,
-            TokenType::RIGHT_ANGLE, TokenType::RIGHT_ANGLE_EQUAL}
-    )) {
+    while (match({TokenType::LEFT_ANGLE, TokenType::LEFT_ANGLE_EQUAL, TokenType::RIGHT_ANGLE,
+                  TokenType::RIGHT_ANGLE_EQUAL})) {
         Token op = previous();
 
         auto right = parseRange();
@@ -443,8 +407,7 @@ ExpressionPtr Parser::parseComparison()
     return left;
 }
 
-ExpressionPtr Parser::parseRange()
-{
+ExpressionPtr Parser::parseRange() {
     auto left = parseAdditive();
 
     if (match(TokenType::RANGE)) {
@@ -458,11 +421,10 @@ ExpressionPtr Parser::parseRange()
     return left;
 }
 
-ExpressionPtr Parser::parseAdditive()
-{
+ExpressionPtr Parser::parseAdditive() {
     auto left = parseMultiplicative();
 
-    while(match({TokenType::PLUS, TokenType::MINUS})) {
+    while (match({TokenType::PLUS, TokenType::MINUS})) {
         Token op = previous();
 
         auto right = parseMultiplicative();
@@ -473,11 +435,10 @@ ExpressionPtr Parser::parseAdditive()
     return left;
 }
 
-ExpressionPtr Parser::parseMultiplicative()
-{
+ExpressionPtr Parser::parseMultiplicative() {
     auto left = parsePower();
 
-    while(match({TokenType::STAR, TokenType::SLASH, TokenType::PERCENT})) {
+    while (match({TokenType::STAR, TokenType::SLASH, TokenType::PERCENT})) {
         Token op = previous();
 
         auto right = parsePower();
@@ -488,11 +449,10 @@ ExpressionPtr Parser::parseMultiplicative()
     return left;
 }
 
-ExpressionPtr Parser::parsePower()
-{
+ExpressionPtr Parser::parsePower() {
     auto left = parseCast();
 
-    while(match(TokenType::CARET)) {
+    while (match(TokenType::CARET)) {
         Token op = previous();
 
         auto right = parseCast();
@@ -503,8 +463,7 @@ ExpressionPtr Parser::parsePower()
     return left;
 }
 
-ExpressionPtr Parser::parseCast()
-{
+ExpressionPtr Parser::parseCast() {
     auto expression = parseUnary();
 
     while (match(TokenType::AS)) {
@@ -516,11 +475,9 @@ ExpressionPtr Parser::parseCast()
     return expression;
 }
 
-ExpressionPtr Parser::parseUnary()
-{
-    if(match({TokenType::NOT, TokenType::MINUS, TokenType::PLUS,
-        TokenType::INCREMENT, TokenType::DECREMENT
-    })) {
+ExpressionPtr Parser::parseUnary() {
+    if (match({TokenType::NOT, TokenType::MINUS, TokenType::PLUS, TokenType::INCREMENT,
+               TokenType::DECREMENT})) {
         Token op = previous();
 
         auto operand = parseUnary();
@@ -531,35 +488,22 @@ ExpressionPtr Parser::parseUnary()
     return parsePostfix();
 }
 
-ExpressionPtr Parser::parsePostfix()
-{
+ExpressionPtr Parser::parsePostfix() {
     auto expression = parsePrimary();
 
     while (true) {
         if (match({TokenType::INCREMENT, TokenType::DECREMENT})) {
-            expression = std::make_unique<UnaryExpression>(
-                previous().type,
-                std::move(expression),
-                true
-            );
-        }
-        else if(match(TokenType::LEFT_BRACKET)) {
+            expression =
+                std::make_unique<UnaryExpression>(previous().type, std::move(expression), true);
+        } else if (match(TokenType::LEFT_BRACKET)) {
             auto index = parseExpression();
 
-            consume(
-                TokenType::RIGHT_BRACKET,
-                "Expected RIGHT_BRACKET after array index"
-            );
+            consume(TokenType::RIGHT_BRACKET, "Expected RIGHT_BRACKET after array index");
 
-            expression = std::make_unique<IndexExpression>(
-                std::move(expression),
-                std::move(index)
-            );
-        }
-        else if (match(TokenType::LEFT_PAREN)) {
+            expression = std::make_unique<IndexExpression>(std::move(expression), std::move(index));
+        } else if (match(TokenType::LEFT_PAREN)) {
             expression = finishCall(std::move(expression));
-        }
-        else {
+        } else {
             break;
         }
     }
@@ -567,42 +511,27 @@ ExpressionPtr Parser::parsePostfix()
     return expression;
 }
 
-ExpressionPtr Parser::finishCall(ExpressionPtr callee)
-{
+ExpressionPtr Parser::finishCall(ExpressionPtr callee) {
     std::vector<ExpressionPtr> arguments;
 
     if (!check(TokenType::RIGHT_PAREN)) {
         do {
             arguments.push_back(parseExpression());
-        }
-        while (match(TokenType::COMMA));
+        } while (match(TokenType::COMMA));
     }
 
-    consume(
-        TokenType::RIGHT_PAREN,
-        "Expected RIGHT_PAREN after arguments"
-    );
+    consume(TokenType::RIGHT_PAREN, "Expected RIGHT_PAREN after arguments");
 
-    return std::make_unique<CallExpression>(
-        std::move(callee),
-        std::move(arguments)
-    );
+    return std::make_unique<CallExpression>(std::move(callee), std::move(arguments));
 }
 
-ExpressionPtr Parser::parsePrimary()
-{
-    if (match({
-        TokenType::INT_LITERAL,
-        TokenType::FLOAT_LITERAL,
-        TokenType::TRUE_LITERAL,
-        TokenType::FALSE_LITERAL,
-        TokenType::CHAR_LITERAL,
-        TokenType::STRING_LITERAL
-    })) {
+ExpressionPtr Parser::parsePrimary() {
+    if (match({TokenType::INT_LITERAL, TokenType::FLOAT_LITERAL, TokenType::TRUE_LITERAL,
+               TokenType::FALSE_LITERAL, TokenType::CHAR_LITERAL, TokenType::STRING_LITERAL})) {
         return std::make_unique<LiteralExpression>(previous().value);
     }
 
-    if(match(TokenType::IDENTIFIER)) {
+    if (match(TokenType::IDENTIFIER)) {
         auto id = previous();
         return std::make_unique<IdentifierExpression>(id.lexeme);
     }
@@ -611,12 +540,12 @@ ExpressionPtr Parser::parsePrimary()
         auto expr = parseExpression();
 
         consume(TokenType::RIGHT_PAREN, "Expected right parentese");
-        
+
         return expr;
     }
 
     if (match(TokenType::LEFT_BRACKET)) {
-        //return parseArrayLiteral();
+        // return parseArrayLiteral();
     }
 
     throw error(peek(), "Expected primary");
@@ -625,29 +554,28 @@ ExpressionPtr Parser::parsePrimary()
 // ExpressionPtr Parser::parseArrayLiteral()
 // {
 //     std::vector<ExpressionPtr> elements;
-// 
+//
 //     if (!check(TokenType::RIGHT_BRACKET)) {
 //         do {
 //             elements.push_back(parseExpression());
 //         }
 //         while (match(TokenType::COMMA));
 //     }
-// 
+//
 //     consume(
 //         TokenType::RIGHT_BRACKET,
 //         "Expected RIGHT_BRACKET after array literal"
 //     );
-// 
+//
 //     return std::make_unique<ArrayLiteral>(
 //         std::move(elements)
 //     );
 // }
 
-Type Parser::parseType()
-{
+Type Parser::parseType() {
     if (match(TokenType::INT_TYPE))
         return Type::Int;
-    
+
     if (match(TokenType::FLOAT_TYPE))
         return Type::Float;
 
@@ -666,14 +594,13 @@ Type Parser::parseType()
     throw error(peek(), "Expected type");
 }
 
-std::vector<Parameter> Parser::parseParameterList()
-{
+std::vector<Parameter> Parser::parseParameterList() {
     std::vector<Parameter> parameters;
 
-    if(check(TokenType::IDENTIFIER)) {
+    if (check(TokenType::IDENTIFIER)) {
         parameters.push_back(parseParameter());
 
-        while(match(TokenType::COMMA)) {
+        while (match(TokenType::COMMA)) {
             parameters.push_back(parseParameter());
         }
     }
@@ -681,9 +608,9 @@ std::vector<Parameter> Parser::parseParameterList()
     return parameters;
 }
 
-Parameter Parser::parseParameter()
-{
-    Token id = consume(TokenType::IDENTIFIER, "Expected " + to_string(TokenType::IDENTIFIER) + "for parameter");
+Parameter Parser::parseParameter() {
+    Token id = consume(TokenType::IDENTIFIER,
+                       "Expected " + to_string(TokenType::IDENTIFIER) + "for parameter");
 
     consume(TokenType::COLON, "Expected " + to_string(TokenType::COLON) + "for parameter");
 

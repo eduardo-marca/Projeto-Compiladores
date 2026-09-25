@@ -5,7 +5,7 @@
 #include <vector>
 
 class Statement : public BlockItem {
-public:
+  public:
     virtual ~Statement() = default;
 };
 

@@ -2,11 +2,11 @@
 
 #include <string>
 
-#include "ForStatement.hpp"
 #include "BlockStatement.hpp"
+#include "ForStatement.hpp"
 
 class IteratorForStatement : public ForStatement {
-public:
+  public:
     std::string variable;
     ExpressionPtr iterable;
     BlockPtr body;
@@ -20,10 +20,8 @@ public:
 
     std::string To_String() const override {
         std::ostringstream oss;
-        oss << "ForIn("
-        << variable << ", "
-        << iterable->To_String() << ", " << std::endl
-        << body->To_String() << ")";
+        oss << "ForIn(" << variable << ", " << iterable->To_String() << ", " << std::endl
+            << body->To_String() << ")";
         return oss.str();
     }
 };

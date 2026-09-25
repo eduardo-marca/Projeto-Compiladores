@@ -10,11 +10,11 @@
 #include "ASTVisitor.hpp"
 
 class ASTDotPrinter final : public ASTVisitor {
-public:
+  public:
     std::string generate(const ASTNode& root);
     void print(const ASTNode& root, std::ostream& out);
 
-private:
+  private:
     using NodeId = int;
 
     NodeId nextId = 0;
@@ -22,8 +22,7 @@ private:
     std::unordered_map<const ASTNode*, NodeId> nodeIds;
 
     NodeId visitNode(const ASTNode& node);
-    NodeId createNode(const ASTNode& node, std::string_view label,
-                      std::string_view fillColor);
+    NodeId createNode(const ASTNode& node, std::string_view label, std::string_view fillColor);
     void createEdge(NodeId from, NodeId to, std::string_view role = {});
 
     std::string escape(std::string_view text) const;

@@ -2,16 +2,16 @@
 
 #include <sstream>
 
-#include "Expression.hpp"
-#include "BlockStatement.hpp"
 #include "ASTVisitor.hpp"
+#include "BlockStatement.hpp"
+#include "Expression.hpp"
 
 class IfStatement : public Statement {
     ExpressionPtr condition;
     StatementPtr thenBranch;
     StatementPtr elseBranch;
-    
-public:
+
+  public:
     IfStatement(ExpressionPtr condition, StatementPtr thenBranch, StatementPtr elseBranch = nullptr)
         : condition(std::move(condition)), thenBranch(std::move(thenBranch)),
           elseBranch(std::move(elseBranch)) {}
@@ -20,20 +20,21 @@ public:
         visitor.visit(*this);
     }
 
-    const ExpressionPtr& getCondition() const { return condition; }
-    const StatementPtr& getThenBranch() const { return thenBranch; }
-    const StatementPtr& getElseBranch() const { return elseBranch; }
+    const ExpressionPtr& getCondition() const {
+        return condition;
+    }
+    const StatementPtr& getThenBranch() const {
+        return thenBranch;
+    }
+    const StatementPtr& getElseBranch() const {
+        return elseBranch;
+    }
 
     std::string To_String() const override {
         std::ostringstream oss;
-        oss << "If("
-        << condition->To_String() << std::endl
-        << thenBranch->To_String();
-        if(elseBranch) {
-            oss << std::endl
-            << "Else(" << std::endl
-            << elseBranch->To_String()
-            << ")";
+        oss << "If(" << condition->To_String() << std::endl << thenBranch->To_String();
+        if (elseBranch) {
+            oss << std::endl << "Else(" << std::endl << elseBranch->To_String() << ")";
         }
         oss << ")";
         return oss.str();

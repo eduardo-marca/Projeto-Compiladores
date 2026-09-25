@@ -2,12 +2,12 @@
 
 #include <sstream>
 
+#include "ASTVisitor.hpp"
 #include "Expression.hpp"
 #include "Type.hpp"
-#include "ASTVisitor.hpp"
 
 class CastExpression : public Expression {
-public:
+  public:
     ExpressionPtr expression;
     Type type;
 
@@ -20,10 +20,7 @@ public:
 
     std::string To_String() const override {
         std::ostringstream oss;
-        oss << "Cast("
-        << expression->To_String() << ", "
-        << to_string(type)
-        << ")";
+        oss << "Cast(" << expression->To_String() << ", " << to_string(type) << ")";
         return oss.str();
     }
 };

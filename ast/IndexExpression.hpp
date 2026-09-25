@@ -2,11 +2,11 @@
 
 #include <sstream>
 
-#include "Expression.hpp"
 #include "ASTVisitor.hpp"
+#include "Expression.hpp"
 
 class IndexExpression : public Expression {
-public:
+  public:
     ExpressionPtr expression;
     ExpressionPtr index;
 
@@ -19,10 +19,7 @@ public:
 
     std::string To_String() const override {
         std::ostringstream oss;
-        oss << "Index("
-        << expression->To_String() << ", "
-        << index->To_String()
-        << ")";
+        oss << "Index(" << expression->To_String() << ", " << index->To_String() << ")";
         return oss.str();
     }
 };
