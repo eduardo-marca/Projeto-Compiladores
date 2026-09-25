@@ -11,6 +11,7 @@ class UnaryExpression;
 class AssignmentExpression;
 class LiteralExpression;
 class IdentifierExpression;
+class ArrayLiteral;
 
 class ExpressionStatement;
 class VariableDeclaration;
@@ -36,6 +37,7 @@ class ASTVisitor {
     virtual void visit(const AssignmentExpression&) = 0;
     virtual void visit(const LiteralExpression&) = 0;
     virtual void visit(const IdentifierExpression&) = 0;
+    virtual void visit(const ArrayLiteral&) = 0;
 
     // Statements
     virtual void visit(const ExpressionStatement&) = 0;

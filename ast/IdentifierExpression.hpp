@@ -1,9 +1,9 @@
 #pragma once
 
+#include <string>
+
 #include "ASTVisitor.hpp"
 #include "Expression.hpp"
-
-#include <string>
 
 class IdentifierExpression : public Expression {
   public:

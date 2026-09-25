@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include "ArrayLiteral.hpp"
 #include "AssignmentExpression.hpp"
 #include "BinaryExpression.hpp"
 #include "BlockStatement.hpp"
@@ -159,6 +160,10 @@ void ASTDotPrinter::visit(const LiteralExpression& node) {
 
 void ASTDotPrinter::visit(const IdentifierExpression& node) {
     createNode(node, "Identifier\n" + node.name, expressionColor);
+}
+
+void ASTDotPrinter::visit(const ArrayLiteral& node) {
+    createNode(node, "ArrayLiteral", expressionColor);
 }
 
 void ASTDotPrinter::visit(const ExpressionStatement& node) {

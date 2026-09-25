@@ -37,6 +37,7 @@ class ASTDotPrinter final : public ASTVisitor {
     void visit(const AssignmentExpression& node) override;
     void visit(const LiteralExpression& node) override;
     void visit(const IdentifierExpression& node) override;
+    void visit(const ArrayLiteral& node) override;
 
     // Statements
     void visit(const ExpressionStatement& node) override;

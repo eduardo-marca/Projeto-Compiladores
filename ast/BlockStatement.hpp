@@ -10,9 +10,7 @@ class BlockStatement : public Statement {
   public:
     std::vector<std::unique_ptr<BlockItem>> items;
 
-    void add(std::unique_ptr<BlockItem> item) {
-        items.push_back(std::move(item));
-    }
+    BlockStatement(std::vector<std::unique_ptr<BlockItem>> items) : items(std::move(items)) {}
 
     void accept(ASTVisitor& visitor) const override {
         visitor.visit(*this);

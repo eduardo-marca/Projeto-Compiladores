@@ -1,6 +1,7 @@
 #include "Parser.hpp"
 #include "ParseError.hpp"
 
+#include "ArrayLiteral.hpp"
 #include "AssignmentExpression.hpp"
 #include "BinaryExpression.hpp"
 #include "BlockStatement.hpp"
@@ -116,13 +117,13 @@ void Parser::synchronize() {
 }
 
 ProgramPtr Parser::parseProgram() {
-    ProgramPtr program = std::make_unique<Program>();
+    std::vector<std::unique_ptr<BlockItem>> items;
 
     while (!isAtEnd()) {
-        program->add(parseBlockItem());
+        items.push_back(parseBlockItem());
     }
 
-    return program;
+    return std::make_unique<Program>(std::move(items));
 }
 
 BlockItemPtr Parser::parseBlockItem() {
@@ -151,15 +152,15 @@ StatementPtr Parser::parseStatement() {
 BlockPtr Parser::parseBlock() {
     consume(TokenType::LEFT_BRACE, "Expected " + to_string(TokenType::LEFT_BRACE));
 
-    auto block = std::make_unique<BlockStatement>();
+    std::vector<std::unique_ptr<BlockItem>> items;
 
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-        block->add(parseBlockItem());
+        items.push_back(parseBlockItem());
     }
 
     consume(TokenType::RIGHT_BRACE, "Expected " + to_string(TokenType::RIGHT_BRACE));
 
-    return block;
+    return std::make_unique<BlockStatement>(std::move(items));
 }
 
 StatementPtr Parser::parseIf() {
@@ -238,7 +239,7 @@ StatementPtr Parser::parseTradicionalFor() {
 StatementPtr Parser::parseReturn() {
     ExpressionPtr value = nullptr;
 
-    consume(TokenType::RETURN, "Exptected RETURN");
+    consume(TokenType::RETURN, "Expected RETURN");
 
     if (!check(TokenType::SEMICOLON)) {
         value = parseExpression();
@@ -551,26 +552,18 @@ ExpressionPtr Parser::parsePrimary() {
     throw error(peek(), "Expected primary");
 }
 
-// ExpressionPtr Parser::parseArrayLiteral()
-// {
-//     std::vector<ExpressionPtr> elements;
-//
-//     if (!check(TokenType::RIGHT_BRACKET)) {
-//         do {
-//             elements.push_back(parseExpression());
-//         }
-//         while (match(TokenType::COMMA));
-//     }
-//
-//     consume(
-//         TokenType::RIGHT_BRACKET,
-//         "Expected RIGHT_BRACKET after array literal"
-//     );
-//
-//     return std::make_unique<ArrayLiteral>(
-//         std::move(elements)
-//     );
-// }
+ExpressionPtr Parser::parseArrayLiteral() {
+    std::vector<ExpressionPtr> elements;
+
+    if (!check(TokenType::RIGHT_BRACKET)) {
+        do {
+            elements.push_back(parseExpression());
+        } while (match(TokenType::COMMA));
+    }
+
+    consume(TokenType::RIGHT_BRACKET, "Expected RIGHT_BRACKET after array literal");
+    return std::make_unique<ArrayLiteral>(std::move(elements));
+}
 
 Type Parser::parseType() {
     if (match(TokenType::INT_TYPE))
