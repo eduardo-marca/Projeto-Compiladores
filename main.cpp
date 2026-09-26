@@ -6,6 +6,7 @@
 #include <string>
 
 #include "ASTDotPrinter.hpp"
+#include "ASTTextPrinter.hpp"
 #include "Lexer.hpp"
 #include "Parser.hpp"
 
@@ -18,6 +19,7 @@ struct Arguments {
     bool ast = false;
     bool ast_svg = false;
     bool ast_png = false;
+    bool old_print = false;
     bool tokens = false;
     bool verbose = false;
 
@@ -36,6 +38,7 @@ void print_help() {
                  "    -a, --ast              Print the AST and write its DOT graph\n"
                  "    --ast-svg              Write the AST DOT graph (for SVG rendering)\n"
                  "    --ast-png              Write the AST DOT graph (for PNG rendering)\n"
+                 "    --old-print            Print the AST in the old text format\n"
                  "    --verbose              Enable verbose output\n"
                  "    -o, --output <file>    Specify output file\n";
 }
@@ -57,6 +60,8 @@ bool parse_arguments(int argc, char* argv[], Arguments& args) {
             args.ast_svg = true;
         } else if (arg == "--ast-png") {
             args.ast_png = true;
+        } else if (arg == "--old-print") {
+            args.old_print = true;
         } else if (arg == "--verbose") {
             args.verbose = true;
         } else if (arg == "-o" || arg == "--output") {
@@ -124,16 +129,22 @@ int main(int argc, char* argv[]) {
     Parser parser(tokens);
     auto program = parser.parse();
 
-    if (args.ast) {
+    if (args.old_print) {
         for (auto& statement : program->items) {
             std::cout << statement->To_String() << std::endl;
         }
     }
 
-    ASTDotPrinter printer;
+    if (args.ast) {
+        ASTTextPrinter printer;
+
+        std::cout << printer.generate(*program) << std::endl;
+    }
 
     if (args.ast_svg || args.ast_png) {
+        ASTDotPrinter printer;
         std::ofstream file(args.output);
+
         if (!file.is_open()) {
             std::cerr << "Failed to open AST output file: " << args.output << std::endl;
             return 1;

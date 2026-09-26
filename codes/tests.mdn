@@ -1,13 +1,1 @@
-for i; i < 10; i += 1 {
-    x += i;
-}
-
-for i in A {
-    x += i;
-}
-
-return;
-
-return x;
-
-return false;
+1+1;
