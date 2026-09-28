@@ -1,0 +1,17 @@
+// Código para testes
+
+if x[0] > 2 {
+    x[2] = y as Int;
+    i++;
+}
+else {
+    y[i--] = 7;
+    if x[3] == 2 {
+        x++;
+        y--;
+    }
+}
+
+for num in x {
+    sum += num;
+}

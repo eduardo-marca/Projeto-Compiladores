@@ -39,29 +39,96 @@ std::string ASTTextPrinter::generate(const ASTNode& root) {
 }
 
 void ASTTextPrinter::visit(const BinaryExpression& node) {
-    addIndentation();
     result += "(";
     node.left->accept(*this);
     result += " ";
     result += to_string(node.op);
     result += " ";
     node.right->accept(*this);
-    result += ")\n";
+    result += ")";
 }
 
-void ASTTextPrinter::visit(const CallExpression& node) {}
-void ASTTextPrinter::visit(const CastExpression& node) {}
-void ASTTextPrinter::visit(const IndexExpression& node) {}
-void ASTTextPrinter::visit(const RangeExpression& node) {}
-void ASTTextPrinter::visit(const UnaryExpression& node) {}
-void ASTTextPrinter::visit(const AssignmentExpression& node) {}
+void ASTTextPrinter::visit(const CallExpression& node) {
+    addIndentation();
+    result += "Call(";
+    incrementIndent();
+    addIndentation();
+    result += "Callee: ";
+    node.callee->accept(*this);
+    result += '\n';
+    addIndentation();
+    result += "Args: ";
+    for (int i = 0; i < node.arguments.size(); i++) {
+        node.arguments[i]->accept(*this);
+        if (i != node.arguments.size() - 1)
+            result += ", ";
+    }
+    result += ")";
+}
+
+void ASTTextPrinter::visit(const CastExpression& node) {
+    result += "Cast(";
+    node.expression->accept(*this);
+    result += " As ";
+    result += to_string(node.type);
+    result += ")";
+}
+
+void ASTTextPrinter::visit(const IndexExpression& node) {
+    result += "Index(";
+    node.expression->accept(*this);
+    result += " at ";
+    node.index->accept(*this);
+    result += ")";
+}
+
+void ASTTextPrinter::visit(const RangeExpression& node) {
+    result += "Range(";
+    node.left->accept(*this);
+    result += " to ";
+    node.right->accept(*this);
+    result += ")";
+}
+
+void ASTTextPrinter::visit(const UnaryExpression& node) {
+    result += "(";
+    if (node.postfix) {
+        node.operand->accept(*this);
+        result += " ";
+        result += to_string(node.op);
+    } else {
+        result += to_string(node.op);
+        result += " ";
+        node.operand->accept(*this);
+    }
+    result += ")";
+}
+
+void ASTTextPrinter::visit(const AssignmentExpression& node) {
+    result += "(";
+    node.left->accept(*this);
+    result += " " + to_string(node.op) + " ";
+    node.right->accept(*this);
+    result += ")";
+}
 
 void ASTTextPrinter::visit(const LiteralExpression& node) {
     result += node.To_String();
 }
 
-void ASTTextPrinter::visit(const IdentifierExpression& node) {}
-void ASTTextPrinter::visit(const ArrayLiteral& node) {}
+void ASTTextPrinter::visit(const IdentifierExpression& node) {
+    result += node.name;
+}
+
+void ASTTextPrinter::visit(const ArrayLiteral& node) {
+    result += "[";
+    for (int i = 0; i < node.elements.size(); i++) {
+        node.elements[i]->accept(*this);
+        if (i != node.elements.size() - 1)
+            result += ", ";
+    }
+    result += "]";
+}
 
 void ASTTextPrinter::visit(const ExpressionStatement& node) {
     node.expression->accept(*this);
@@ -78,10 +145,15 @@ void ASTTextPrinter::visit(const VariableDeclaration& node) {
     result += "\n";
 }
 
-void ASTTextPrinter::visit(const BlockStatement& node) {}
+void ASTTextPrinter::visit(const BlockStatement& node) {
+    for (auto& blockItem : node.items) {
+        addIndentation();
+        blockItem->accept(*this);
+        result += '\n';
+    }
+}
 
 void ASTTextPrinter::visit(const IfStatement& node) {
-    addIndentation();
     result += "IfStatement:\n";
     incrementIndent();
     addIndentation();
@@ -100,11 +172,36 @@ void ASTTextPrinter::visit(const IfStatement& node) {
         node.getElseBranch()->accept(*this);
         decrementIndent();
     }
+    decrementIndent();
 }
 
-void ASTTextPrinter::visit(const WhileStatement& node) {}
-void ASTTextPrinter::visit(const IteratorForStatement& node) {}
+void ASTTextPrinter::visit(const WhileStatement& node) {
+    addIndentation();
+    result += "WhileStatement:\n";
+    incrementIndent();
+    addIndentation();
+    result += "Condition: ";
+    node.getCondition()->accept(*this);
+    result += "\n";
+    addIndentation();
+    result += "Body:      ";
+    node.getBody()->accept(*this);
+    result += "\n";
+    decrementIndent();
+}
+
+void ASTTextPrinter::visit(const IteratorForStatement& node) {
+    addIndentation();
+    result += "For " + node.variable + " in ";
+    node.iterable->accept(*this);
+    result += ":\n";
+    incrementIndent();
+    node.body->accept(*this);
+    decrementIndent();
+}
+
 void ASTTextPrinter::visit(const TradicionalForStatement& node) {}
+
 void ASTTextPrinter::visit(const ReturnStatement& node) {}
 
 void ASTTextPrinter::visit(const FunctionDeclaration& node) {}

@@ -10,7 +10,7 @@
 #include "Lexer.hpp"
 #include "Parser.hpp"
 
-const std::filesystem::path standard_input_file = "codes/tests.mdn";
+const std::filesystem::path standard_input_file = "examples/tests.mdn";
 const std::filesystem::path standard_output_file = "output/ast.dot";
 
 struct Arguments {
