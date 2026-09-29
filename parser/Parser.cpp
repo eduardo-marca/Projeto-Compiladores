@@ -274,12 +274,12 @@ DeclarationPtr Parser::parseVariableDeclaration() {
     else
         throw error(peek(), "Expected variable mutability");
 
+    Token id = consume(TokenType::IDENTIFIER, "Expected IDENTIFIER in variable declaration");
+
     Type type = Type::Undefined;
     if (match(TokenType::COLON)) {
         type = parseType();
     }
-
-    Token id = consume(TokenType::IDENTIFIER, "Expected IDENTIFIER in variable declaration");
 
     ExpressionPtr initializationExpression = nullptr;
     if (match(TokenType::ASSIGN)) {

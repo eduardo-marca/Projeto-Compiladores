@@ -36,7 +36,6 @@ class ASTTextPrinter final : public ASTVisitor {
 
     // Statements
     void visit(const ExpressionStatement& node) override;
-    void visit(const VariableDeclaration& node) override;
     void visit(const BlockStatement& node) override;
     void visit(const IfStatement& node) override;
     void visit(const WhileStatement& node) override;
@@ -46,5 +45,6 @@ class ASTTextPrinter final : public ASTVisitor {
 
     // Declarations and root
     void visit(const FunctionDeclaration& node) override;
+    void visit(const VariableDeclaration& node) override;
     void visit(const Program& node) override;
 };

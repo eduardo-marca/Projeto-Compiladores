@@ -1,17 +1,12 @@
-// Código para testes
-
-if x[0] > 2 {
-    x[2] = y as Int;
-    i++;
-}
-else {
-    y[i--] = 7;
-    if x[3] == 2 {
-        x++;
-        y--;
-    }
+/*
+main function of the program
+return Void (nothing)
+*/
+fn main() -> Void {
+    print("Enter two numbers");
+    let A : Int = input();
+    let B = input() as Int;
+    print("The sum is: " (A + B) as String);
 }
 
-for num in x {
-    sum += num;
-}
+main();
