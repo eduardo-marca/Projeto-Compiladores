@@ -13,6 +13,6 @@ class Value {
     std::variant<std::monostate, std::int64_t, double, bool, char, std::string> val;
 
     std::string To_String() const {
-        return "Value(" + to_string(type) + ", " + lexeme + ")";
+        return "Value(" + type.To_String() + ", " + lexeme + ")";
     }
 };

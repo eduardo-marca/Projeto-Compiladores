@@ -20,7 +20,7 @@ class CastExpression : public Expression {
 
     std::string To_String() const override {
         std::ostringstream oss;
-        oss << "Cast(" << expression->To_String() << ", " << to_string(type) << ")";
+        oss << "Cast(" << expression->To_String() << ", " << type.To_String() << ")";
         return oss.str();
     }
 };

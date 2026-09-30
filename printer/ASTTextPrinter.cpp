@@ -74,7 +74,7 @@ void ASTTextPrinter::visit(const CastExpression& node) {
     result += "Cast(";
     node.expression->accept(*this);
     result += " As ";
-    result += to_string(node.type);
+    result += node.type.To_String();
     result += ")";
 }
 
@@ -227,7 +227,7 @@ void ASTTextPrinter::visit(const FunctionDeclaration& node) {
     addIndentation();
     result += "name: " + node.name += '\n';
     addIndentation();
-    result += "return type: " + to_string(node.returnType) + '\n';
+    result += "return type: " + node.returnType.To_String() + '\n';
     addIndentation();
     result += "parameters:";
     if (node.parameters.empty()) {
@@ -235,7 +235,7 @@ void ASTTextPrinter::visit(const FunctionDeclaration& node) {
     } else {
         incrementIndent();
         for (auto& param : node.parameters) {
-            result += param.name + " : " + to_string(param.type) + '\n';
+            result += param.name + " : " + param.type.To_String() + '\n';
         }
         decrementIndent();
     }

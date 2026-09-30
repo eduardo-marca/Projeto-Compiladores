@@ -154,7 +154,7 @@ void ASTDotPrinter::visit(const AssignmentExpression& node) {
 }
 
 void ASTDotPrinter::visit(const LiteralExpression& node) {
-    createNode(node, "Literal\n" + to_string(node.value.type) + ": " + node.value.lexeme,
+    createNode(node, "Literal\n" + node.value.type.To_String() + ": " + node.value.lexeme,
                expressionColor);
 }
 
@@ -174,7 +174,7 @@ void ASTDotPrinter::visit(const ExpressionStatement& node) {
 
 void ASTDotPrinter::visit(const VariableDeclaration& node) {
     const NodeId id = createNode(
-        node, "Variable declaration\n" + to_string(node.getType()) + " " + node.getName(),
+        node, "Variable declaration\n" + node.getType().To_String() + " " + node.getName(),
         statementColor);
     if (node.getInitializer())
         createEdge(id, visitNode(*node.getInitializer()), "initializer");
@@ -219,9 +219,9 @@ void ASTDotPrinter::visit(const ReturnStatement& node) {
 }
 
 void ASTDotPrinter::visit(const FunctionDeclaration& node) {
-    const NodeId id =
-        createNode(node, "Function declaration\n" + node.name + " -> " + to_string(node.returnType),
-                   declarationColor);
+    const NodeId id = createNode(
+        node, "Function declaration\n" + node.name + " -> " + node.returnType.To_String(),
+        declarationColor);
     if (node.body)
         createEdge(id, visitNode(*node.body), "body");
 }

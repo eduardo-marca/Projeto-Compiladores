@@ -51,7 +51,6 @@ class Parser {
     // Grammar rules
     ProgramPtr parseProgram();
     BlockItemPtr parseBlockItem();
-    // std::unique_ptr<StatementList> parseStatementList();
 
     // declarações
     DeclarationPtr parseDeclaration();

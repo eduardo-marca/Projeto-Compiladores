@@ -276,7 +276,7 @@ DeclarationPtr Parser::parseVariableDeclaration() {
 
     Token id = consume(TokenType::IDENTIFIER, "Expected IDENTIFIER in variable declaration");
 
-    Type type = Type::Undefined;
+    Type type = Type(PrimitiveType::Undefined);
     if (match(TokenType::COLON)) {
         type = parseType();
     }
@@ -546,7 +546,7 @@ ExpressionPtr Parser::parsePrimary() {
     }
 
     if (match(TokenType::LEFT_BRACKET)) {
-        // return parseArrayLiteral();
+        return parseArrayLiteral();
     }
 
     throw error(peek(), "Expected primary");
@@ -566,25 +566,34 @@ ExpressionPtr Parser::parseArrayLiteral() {
 }
 
 Type Parser::parseType() {
+    PrimitiveType primitive;
     if (match(TokenType::INT_TYPE))
-        return Type::Int;
+        primitive = PrimitiveType::Int;
+    else if (match(TokenType::FLOAT_TYPE))
+        primitive = PrimitiveType::Float;
+    else if (match(TokenType::BOOL_TYPE))
+        primitive = PrimitiveType::Bool;
+    else if (match(TokenType::CHAR_TYPE))
+        primitive = PrimitiveType::Char;
+    else if (match(TokenType::STRING_TYPE))
+        primitive = PrimitiveType::String;
+    else if (match(TokenType::VOID_TYPE))
+        primitive = PrimitiveType::Void;
+    else
+        throw error(peek(), "Expected type");
 
-    if (match(TokenType::FLOAT_TYPE))
-        return Type::Float;
+    bool isArray = false;
+    size_t arraySize = 0;
+    if (check(TokenType::LEFT_BRACKET)) {
+        consume(TokenType::LEFT_BRACKET, "Expected LEFT_BRACKET");
+        if (check(TokenType::INT_LITERAL)) {
+            arraySize = std::get<int64_t>(peek().value.val);
+            consume(TokenType::INT_LITERAL, "Expected INT_LITERAL for array size");
+        }
+        consume(TokenType::RIGHT_BRACKET, "Expected RIGHT_BRACKET");
+    }
 
-    if (match(TokenType::BOOL_TYPE))
-        return Type::Bool;
-
-    if (match(TokenType::CHAR_TYPE))
-        return Type::Char;
-
-    if (match(TokenType::STRING_TYPE))
-        return Type::String;
-
-    if (match(TokenType::VOID_TYPE))
-        return Type::Void;
-
-    throw error(peek(), "Expected type");
+    return Type(primitive, isArray, arraySize);
 }
 
 std::vector<Parameter> Parser::parseParameterList() {

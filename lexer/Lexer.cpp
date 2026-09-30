@@ -115,27 +115,27 @@ Token Lexer::nextToken() {
     }
     if (token.type == TokenType::INT_LITERAL) {
         token.value.val = std::stoll(token.lexeme);
-        token.value.type = Type::Int;
+        token.value.type = Type(PrimitiveType::Int);
         token.value.lexeme = token.lexeme;
     } else if (token.type == TokenType::FLOAT_LITERAL) {
         token.value.val = std::stod(token.lexeme);
-        token.value.type = Type::Float;
+        token.value.type = Type(PrimitiveType::Float);
         token.value.lexeme = token.lexeme;
     } else if (token.type == TokenType::TRUE_LITERAL) {
         token.value.val = true;
-        token.value.type = Type::Bool;
+        token.value.type = Type(PrimitiveType::Bool);
         token.value.lexeme = token.lexeme;
     } else if (token.type == TokenType::FALSE_LITERAL) {
         token.value.val = false;
-        token.value.type = Type::Bool;
+        token.value.type = Type(PrimitiveType::Bool);
         token.value.lexeme = token.lexeme;
     } else if (token.type == TokenType::CHAR_LITERAL) {
         token.value.val = token.lexeme[1];
-        token.value.type = Type::Char;
+        token.value.type = Type(PrimitiveType::Char);
         token.value.lexeme = token.lexeme[1];
     } else if (token.type == TokenType::STRING_LITERAL) {
         token.value.val = token.lexeme.substr(1, token.lexeme.size() - 2);
-        token.value.type = Type::String;
+        token.value.type = Type(PrimitiveType::String);
         token.value.lexeme = token.lexeme.substr(1, token.lexeme.size() - 2);
     }
 

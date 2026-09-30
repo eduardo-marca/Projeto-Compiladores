@@ -15,6 +15,6 @@ class LiteralExpression : public Expression {
     }
 
     std::string To_String() const override {
-        return "(" + to_string(value.type) + ", " + value.lexeme + ")";
+        return "(" + value.type.To_String() + ", " + value.lexeme + ")";
     }
 };
