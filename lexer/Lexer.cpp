@@ -83,6 +83,10 @@ Token Lexer::nextToken() {
         state = *next;
         position++;
         column++;
+        if (c == '\n') {
+            column = 1;
+            line++;
+        }
 
         // se é estado final, guarda seu token e posição
         if (dfa.isFinal(state)) {
