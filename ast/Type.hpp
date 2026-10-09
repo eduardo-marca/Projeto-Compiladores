@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 enum class PrimitiveType { Void, Int, Float, Bool, Char, String, Undefined };
 
 inline std::string to_string(PrimitiveType type) {
@@ -33,8 +35,11 @@ class Type {
 
     std::string To_String() const {
         std::string result = to_string(primitiveType);
-        if (isArray)
-            result += "[]";
+        if (isArray) {
+            result += "[";
+            result += std::to_string(arraySize);
+            result += "]";
+        }
         return result;
     }
 };

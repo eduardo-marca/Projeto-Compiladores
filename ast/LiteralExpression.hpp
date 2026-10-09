@@ -15,6 +15,16 @@ class LiteralExpression : public Expression {
     }
 
     std::string To_String() const override {
-        return "(" + value.type.To_String() + ", " + value.lexeme + ")";
+        std::string result = value.type.To_String() + " : ";
+        if (value.type.primitiveType == PrimitiveType::Char)
+            result += '\'';
+        else if (value.type.primitiveType == PrimitiveType::String)
+            result += '\"';
+        result += value.lexeme;
+        if (value.type.primitiveType == PrimitiveType::Char)
+            result += '\'';
+        else if (value.type.primitiveType == PrimitiveType::String)
+            result += '\"';
+        return result;
     }
 };

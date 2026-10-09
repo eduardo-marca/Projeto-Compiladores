@@ -49,25 +49,20 @@ void ASTTextPrinter::visit(const BinaryExpression& node) {
 }
 
 void ASTTextPrinter::visit(const CallExpression& node) {
-    result += "Call:\n";
-    incrementIndent();
-    addIndentation();
-    result += "Callee: ";
+    result += "Call(";
     node.callee->accept(*this);
-    result += '\n';
-    addIndentation();
+    result += ", ";
     result += "Args: ";
     if (node.arguments.size() == 0) {
         result += "None";
     } else {
-
         for (size_t i = 0; i < node.arguments.size(); i++) {
             node.arguments[i]->accept(*this);
             if (i != node.arguments.size() - 1)
                 result += ", ";
         }
     }
-    decrementIndent();
+    result += ')';
 }
 
 void ASTTextPrinter::visit(const CastExpression& node) {
@@ -117,7 +112,7 @@ void ASTTextPrinter::visit(const AssignmentExpression& node) {
 }
 
 void ASTTextPrinter::visit(const LiteralExpression& node) {
-    result += node.To_String();
+    result += "(" + node.To_String() + ')';
 }
 
 void ASTTextPrinter::visit(const IdentifierExpression& node) {
@@ -139,13 +134,21 @@ void ASTTextPrinter::visit(const ExpressionStatement& node) {
 }
 
 void ASTTextPrinter::visit(const VariableDeclaration& node) {
-    result += "VariableDeclaration: ";
-    result += node.getName();
+    result += "VariableDeclaration:\n";
+    incrementIndent();
+    addIndentation();
+    result += "Name: " + node.getName() + '\n';
+    addIndentation();
+    result += "Type: " + node.getType().To_String() + '\n';
+    addIndentation();
+    result += "Initializer: ";
     if (node.getInitializer()) {
-        result += " = ";
         node.getInitializer()->accept(*this);
+    } else {
+        result += "None";
     }
-    result += "\n";
+    result += '\n';
+    decrementIndent();
 }
 
 void ASTTextPrinter::visit(const BlockStatement& node) {
@@ -164,13 +167,13 @@ void ASTTextPrinter::visit(const IfStatement& node) {
     node.getCondition()->accept(*this);
     result += "\n";
     addIndentation();
-    result += "ThenBody:\n";
+    result += "ThenBlock:\n";
     incrementIndent();
     node.getThenBranch()->accept(*this);
     decrementIndent();
     if (node.getElseBranch()) {
         addIndentation();
-        result += "ElseBody:\n";
+        result += "ElseBlock:\n";
         incrementIndent();
         node.getElseBranch()->accept(*this);
         decrementIndent();
@@ -225,22 +228,24 @@ void ASTTextPrinter::visit(const FunctionDeclaration& node) {
     result += "FunctionDeclaration:\n";
     incrementIndent();
     addIndentation();
-    result += "name: " + node.name += '\n';
+    result += "Name: " + node.name += '\n';
     addIndentation();
-    result += "return type: " + node.returnType.To_String() + '\n';
+    result += "Return type: " + node.returnType.To_String() + '\n';
     addIndentation();
-    result += "parameters:";
+    result += "Parameters: ";
     if (node.parameters.empty()) {
         result += " None\n";
     } else {
+        result += '\n';
         incrementIndent();
         for (auto& param : node.parameters) {
+            addIndentation();
             result += param.name + " : " + param.type.To_String() + '\n';
         }
         decrementIndent();
     }
     addIndentation();
-    result += "body:\n";
+    result += "Body:\n";
     incrementIndent();
     node.body->accept(*this);
     decrementIndent();

@@ -167,10 +167,10 @@ StatementPtr Parser::parseIf() {
     consume(TokenType::IF, "Expected IF");
 
     ExpressionPtr condition = parseExpression();
-    StatementPtr thenBranch = parseBlock();
+    BlockPtr thenBranch = parseBlock();
 
     if (match(TokenType::ELSE)) {
-        StatementPtr elseBranch = parseBlock();
+        BlockPtr elseBranch = parseBlock();
         return std::make_unique<IfStatement>(std::move(condition), std::move(thenBranch),
                                              std::move(elseBranch));
     }
@@ -276,7 +276,7 @@ DeclarationPtr Parser::parseVariableDeclaration() {
 
     Token id = consume(TokenType::IDENTIFIER, "Expected IDENTIFIER in variable declaration");
 
-    Type type = Type(PrimitiveType::Undefined);
+    Type type = Type();
     if (match(TokenType::COLON)) {
         type = parseType();
     }
@@ -584,12 +584,12 @@ Type Parser::parseType() {
 
     bool isArray = false;
     size_t arraySize = 0;
-    if (check(TokenType::LEFT_BRACKET)) {
-        consume(TokenType::LEFT_BRACKET, "Expected LEFT_BRACKET");
+    if (match(TokenType::LEFT_BRACKET)) {
         if (check(TokenType::INT_LITERAL)) {
             arraySize = std::get<int64_t>(peek().value.val);
             consume(TokenType::INT_LITERAL, "Expected INT_LITERAL for array size");
         }
+        isArray = true;
         consume(TokenType::RIGHT_BRACKET, "Expected RIGHT_BRACKET");
     }
 
@@ -612,9 +612,9 @@ std::vector<Parameter> Parser::parseParameterList() {
 
 Parameter Parser::parseParameter() {
     Token id = consume(TokenType::IDENTIFIER,
-                       "Expected " + to_string(TokenType::IDENTIFIER) + "for parameter");
+                       "Expected " + to_string(TokenType::IDENTIFIER) + " for parameter");
 
-    consume(TokenType::COLON, "Expected " + to_string(TokenType::COLON) + "for parameter");
+    consume(TokenType::COLON, "Expected " + to_string(TokenType::COLON) + " for parameter");
 
     Type type = parseType();
 

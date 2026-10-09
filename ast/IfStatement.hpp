@@ -8,11 +8,11 @@
 
 class IfStatement : public Statement {
     ExpressionPtr condition;
-    StatementPtr thenBranch;
-    StatementPtr elseBranch;
+    BlockPtr thenBranch;
+    BlockPtr elseBranch;
 
   public:
-    IfStatement(ExpressionPtr condition, StatementPtr thenBranch, StatementPtr elseBranch = nullptr)
+    IfStatement(ExpressionPtr condition, BlockPtr thenBranch, BlockPtr elseBranch = nullptr)
         : condition(std::move(condition)), thenBranch(std::move(thenBranch)),
           elseBranch(std::move(elseBranch)) {}
 
@@ -23,10 +23,10 @@ class IfStatement : public Statement {
     const ExpressionPtr& getCondition() const {
         return condition;
     }
-    const StatementPtr& getThenBranch() const {
+    const BlockPtr& getThenBranch() const {
         return thenBranch;
     }
-    const StatementPtr& getElseBranch() const {
+    const BlockPtr& getElseBranch() const {
         return elseBranch;
     }
 
