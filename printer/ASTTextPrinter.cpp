@@ -147,7 +147,6 @@ void ASTTextPrinter::visit(const VariableDeclaration& node) {
     } else {
         result += "None";
     }
-    result += '\n';
     decrementIndent();
 }
 
