@@ -24,10 +24,21 @@
 #include "WhileStatement.hpp"
 
 namespace {
-constexpr std::string_view expressionColor = "#E3F2FD";
-constexpr std::string_view statementColor = "#E8F5E9";
-constexpr std::string_view declarationColor = "#FFF3E0";
-constexpr std::string_view rootColor = "#EDE7F6";
+constexpr std::string_view expressionColor = "#74b0db";
+constexpr std::string_view statementColor = "#9cf0a3";
+constexpr std::string_view declarationColor = "#edb760";
+constexpr std::string_view rootColor = "#b28beb";
+
+std::string formatParameters(const std::vector<Parameter>& parameters) {
+    std::string result;
+    for (std::size_t index = 0; index < parameters.size(); ++index) {
+        if (index != 0) {
+            result += ", ";
+        }
+        result += parameters[index].name + ": " + parameters[index].type.To_String();
+    }
+    return result;
+}
 } // namespace
 
 std::string ASTDotPrinter::generate(const ASTNode& root) {
@@ -124,19 +135,35 @@ void ASTDotPrinter::visit(const BinaryExpression& node) {
 }
 
 void ASTDotPrinter::visit(const CallExpression& node) {
-    createNode(node, "Call", expressionColor);
+    const NodeId id = createNode(node, "Call expression", expressionColor);
+    if (node.callee)
+        createEdge(id, visitNode(*node.callee), "callee");
+    for (std::size_t index = 0; index < node.arguments.size(); ++index) {
+        if (node.arguments[index])
+            createEdge(id, visitNode(*node.arguments[index]), "argument " + std::to_string(index));
+    }
 }
 
 void ASTDotPrinter::visit(const CastExpression& node) {
-    createNode(node, "Cast", expressionColor);
+    const NodeId id = createNode(node, "Cast expression\n" + node.type.To_String(), expressionColor);
+    if (node.expression)
+        createEdge(id, visitNode(*node.expression), "expression");
 }
 
 void ASTDotPrinter::visit(const IndexExpression& node) {
-    createNode(node, "Index", expressionColor);
+    const NodeId id = createNode(node, "Index expression", expressionColor);
+    if (node.expression)
+        createEdge(id, visitNode(*node.expression), "object");
+    if (node.index)
+        createEdge(id, visitNode(*node.index), "index");
 }
 
 void ASTDotPrinter::visit(const RangeExpression& node) {
-    createNode(node, "Range", expressionColor);
+    const NodeId id = createNode(node, "Range expression", expressionColor);
+    if (node.left)
+        createEdge(id, visitNode(*node.left), "start");
+    if (node.right)
+        createEdge(id, visitNode(*node.right), "end");
 }
 
 void ASTDotPrinter::visit(const UnaryExpression& node) {
@@ -163,7 +190,11 @@ void ASTDotPrinter::visit(const IdentifierExpression& node) {
 }
 
 void ASTDotPrinter::visit(const ArrayLiteral& node) {
-    createNode(node, "ArrayLiteral", expressionColor);
+    const NodeId id = createNode(node, "Array literal", expressionColor);
+    for (std::size_t index = 0; index < node.elements.size(); ++index) {
+        if (node.elements[index])
+            createEdge(id, visitNode(*node.elements[index]), "element " + std::to_string(index));
+    }
 }
 
 void ASTDotPrinter::visit(const ExpressionStatement& node) {
@@ -174,17 +205,18 @@ void ASTDotPrinter::visit(const ExpressionStatement& node) {
 
 void ASTDotPrinter::visit(const VariableDeclaration& node) {
     const NodeId id = createNode(
-        node, "Variable declaration\n" + node.getType().To_String() + " " + node.getName(),
-        statementColor);
+        node, "Variable declaration\n" + to_string(node.getMutability()) + " " +
+                  node.getName() + ": " + node.getType().To_String(),
+        declarationColor);
     if (node.getInitializer())
         createEdge(id, visitNode(*node.getInitializer()), "initializer");
 }
 
 void ASTDotPrinter::visit(const BlockStatement& node) {
     const NodeId id = createNode(node, "Block", statementColor);
-    for (const auto& statement : node.items) {
-        if (statement)
-            createEdge(id, visitNode(*statement), "statement");
+    for (std::size_t index = 0; index < node.items.size(); ++index) {
+        if (node.items[index])
+            createEdge(id, visitNode(*node.items[index]), "item " + std::to_string(index));
     }
 }
 
@@ -207,20 +239,35 @@ void ASTDotPrinter::visit(const WhileStatement& node) {
 }
 
 void ASTDotPrinter::visit(const IteratorForStatement& node) {
-    createNode(node, "For-in", statementColor);
+    const NodeId id = createNode(node, "For-in\n" + node.variable, statementColor);
+    if (node.iterable)
+        createEdge(id, visitNode(*node.iterable), "iterable");
+    if (node.body)
+        createEdge(id, visitNode(*node.body), "body");
 }
 
 void ASTDotPrinter::visit(const TradicionalForStatement& node) {
-    createNode(node, "For", statementColor);
+    const NodeId id = createNode(node, "Traditional for", statementColor);
+    if (node.initialization)
+        createEdge(id, visitNode(*node.initialization), "initializer");
+    if (node.condition)
+        createEdge(id, visitNode(*node.condition), "condition");
+    if (node.increment)
+        createEdge(id, visitNode(*node.increment), "increment");
+    if (node.body)
+        createEdge(id, visitNode(*node.body), "body");
 }
 
 void ASTDotPrinter::visit(const ReturnStatement& node) {
-    createNode(node, "Return", statementColor);
+    const NodeId id = createNode(node, "Return", statementColor);
+    if (node.value)
+        createEdge(id, visitNode(*node.value), "value");
 }
 
 void ASTDotPrinter::visit(const FunctionDeclaration& node) {
     const NodeId id = createNode(
-        node, "Function declaration\n" + node.name + " -> " + node.returnType.To_String(),
+        node, "Function declaration\n" + node.name + "(" + formatParameters(node.parameters) +
+                  ") -> " + node.returnType.To_String(),
         declarationColor);
     if (node.body)
         createEdge(id, visitNode(*node.body), "body");
@@ -228,8 +275,8 @@ void ASTDotPrinter::visit(const FunctionDeclaration& node) {
 
 void ASTDotPrinter::visit(const Program& node) {
     const NodeId id = createNode(node, "Program", rootColor);
-    for (const auto& statement : node.items) {
-        if (statement)
-            createEdge(id, visitNode(*statement), "item");
+    for (std::size_t index = 0; index < node.items.size(); ++index) {
+        if (node.items[index])
+            createEdge(id, visitNode(*node.items[index]), "item " + std::to_string(index));
     }
 }

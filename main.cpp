@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <string_view>
 
 #include "ASTDotPrinter.hpp"
 #include "ASTTextPrinter.hpp"
@@ -13,10 +14,25 @@
 const std::filesystem::path standard_input_file = "examples/tests.mdn";
 const std::filesystem::path standard_output_file = "output/ast.dot";
 
+namespace {
+std::string shellQuote(std::string_view value) {
+    std::string quoted = "'";
+    for (const char character : value) {
+        if (character == '\'') {
+            quoted += "'\\''";
+        } else {
+            quoted += character;
+        }
+    }
+    return quoted + "'";
+}
+} // namespace
+
 struct Arguments {
     std::filesystem::path input_file;
 
     bool ast = false;
+    bool ast_dot = false;
     bool ast_svg = false;
     bool ast_png = false;
     bool old_print = false;
@@ -35,9 +51,10 @@ void print_help() {
                  "Options:\n"
                  "    -h, --help             Show this help message\n"
                  "    -t, --tokens           Print lexical tokens\n"
-                 "    -a, --ast              Print the AST and write its DOT graph\n"
-                 "    --ast-svg              Write the AST DOT graph (for SVG rendering)\n"
-                 "    --ast-png              Write the AST DOT graph (for PNG rendering)\n"
+                 "    -a, --ast              Print the AST as indented text\n"
+                 "    --ast-dot              Write the AST as a DOT graph\n"
+                 "    --ast-svg              Write the AST as DOT and SVG\n"
+                 "    --ast-png              Write the AST as DOT and PNG\n"
                  "    --old-print            Print the AST in the old text format\n"
                  "    --verbose              Enable verbose output\n"
                  "    -o, --output <file>    Specify output file\n";
@@ -56,6 +73,8 @@ bool parse_arguments(int argc, char* argv[], Arguments& args) {
             args.tokens = true;
         } else if (arg == "-a" || arg == "--ast") {
             args.ast = true;
+        } else if (arg == "--ast-dot") {
+            args.ast_dot = true;
         } else if (arg == "--ast-svg") {
             args.ast_svg = true;
         } else if (arg == "--ast-png") {
@@ -88,13 +107,6 @@ bool parse_arguments(int argc, char* argv[], Arguments& args) {
         std::cout << "no input file specified, using standard: " << standard_input_file
                   << std::endl;
         args.input_file = standard_input_file;
-    }
-
-    if (args.output.empty()) {
-
-        std::cout << "no output file specified, using standard: " << standard_output_file
-                  << std::endl;
-        args.output = standard_output_file;
     }
 
     return true;
@@ -137,12 +149,23 @@ int main(int argc, char* argv[]) {
 
     if (args.ast) {
         ASTTextPrinter printer;
-
-        std::cout << printer.generate(*program) << std::endl;
+        std::cout << printer.generate(*program);
     }
 
-    if (args.ast_svg || args.ast_png) {
+    if (args.ast_dot || args.ast_svg || args.ast_png) {
         ASTDotPrinter printer;
+        if (args.output.empty()) {
+            args.output = standard_output_file;
+        }
+        if (!args.output.parent_path().empty()) {
+            std::error_code error;
+            std::filesystem::create_directories(args.output.parent_path(), error);
+            if (error) {
+                std::cerr << "Failed to create AST output directory: "
+                          << args.output.parent_path() << std::endl;
+                return 1;
+            }
+        }
         std::ofstream file(args.output);
 
         if (!file.is_open()) {
@@ -153,11 +176,25 @@ int main(int argc, char* argv[]) {
     }
 
     if (args.ast_svg) {
-        std::system("dot -Tsvg output/ast.dot -o output/ast.svg");
+        std::filesystem::path imagePath = args.output;
+        imagePath.replace_extension(".svg");
+        const std::string command = "dot -Tsvg " + shellQuote(args.output.string()) + " -o " +
+                                    shellQuote(imagePath.string());
+        if (std::system(command.c_str()) != 0) {
+            std::cerr << "Failed to render AST SVG with Graphviz.\n";
+            return 1;
+        }
     }
 
     if (args.ast_png) {
-        std::system("dot -Tsvg output/ast.dot -o output/ast.png");
+        std::filesystem::path imagePath = args.output;
+        imagePath.replace_extension(".png");
+        const std::string command = "dot -Tpng " + shellQuote(args.output.string()) + " -o " +
+                                    shellQuote(imagePath.string());
+        if (std::system(command.c_str()) != 0) {
+            std::cerr << "Failed to render AST PNG with Graphviz.\n";
+            return 1;
+        }
     }
 
     return 0;

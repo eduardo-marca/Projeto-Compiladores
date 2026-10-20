@@ -1,26 +1,24 @@
 #pragma once
 
+#include <cstddef>
+#include <sstream>
 #include <string>
+#include <string_view>
 
 #include "AST.hpp"
 #include "ASTVisitor.hpp"
 
 class ASTTextPrinter final : public ASTVisitor {
-  private:
-    std::string result;
-    int indentLevel;
-
-    void addIndentation();
-    void incrementIndent();
-    void decrementIndent();
-
   public:
-    ASTTextPrinter() : indentLevel(0) {}
-
     std::string generate(const ASTNode& root);
 
   private:
+    std::ostringstream output;
+    std::size_t indentLevel = 0;
+
+    void writeLine(std::string_view text);
     void visitNode(const ASTNode& node);
+    void visitChild(std::string_view label, const ASTNode* child);
 
     // Expressions
     void visit(const BinaryExpression& node) override;
@@ -36,6 +34,7 @@ class ASTTextPrinter final : public ASTVisitor {
 
     // Statements
     void visit(const ExpressionStatement& node) override;
+    void visit(const VariableDeclaration& node) override;
     void visit(const BlockStatement& node) override;
     void visit(const IfStatement& node) override;
     void visit(const WhileStatement& node) override;
@@ -45,6 +44,5 @@ class ASTTextPrinter final : public ASTVisitor {
 
     // Declarations and root
     void visit(const FunctionDeclaration& node) override;
-    void visit(const VariableDeclaration& node) override;
     void visit(const Program& node) override;
 };

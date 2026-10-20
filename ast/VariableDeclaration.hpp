@@ -9,6 +9,10 @@
 
 enum class Mutability { Let, Var };
 
+inline std::string to_string(Mutability mutability) {
+    return mutability == Mutability::Let ? "let" : "var";
+}
+
 class VariableDeclaration : public Declaration {
     Mutability mutability;
     Type type;
@@ -26,6 +30,9 @@ class VariableDeclaration : public Declaration {
 
     Type getType() const {
         return type;
+    }
+    Mutability getMutability() const {
+        return mutability;
     }
     const std::string& getName() const {
         return name;

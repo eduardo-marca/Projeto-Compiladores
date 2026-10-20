@@ -35,12 +35,12 @@ fn Sum(A : Int[]) -> Int {
 }
 
 fn main() -> Void {
-    A : Int[] = [1, 2, 3, 4, 5];
+    let A : Int[] = [1, 2, 3, 4, 5];
 
-    let sum = Sum(A)
-    mean : Float = (sum as Float) / length(A);
+    let sum = Sum(A);
+    var mean : Float = (sum as Float) / length(A);
 
-    mensagem : String = "The mean is: " + mean as String;
+    let mensagem : String = "The mean is: " + mean as String;
     print(mensagem);
 
     for i in 0..length(dp) {
@@ -51,7 +51,7 @@ fn main() -> Void {
 
     // calc and print the first (10) primes
     let count = 10;
-    var primes : Int[count];
+    var primes : Int[100];
     var i = 0;
     var x = 1;
     while i < count {
